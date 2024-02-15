@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                background: black;
+                user-select: none;
+                -moz-user-select: none;
+            }
+            .main-system {
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                background: rgba(8, 8, 113, 0.268);
+            }
+            .main-top {
+                top: 0;
+                width: 100%;
+                padding: 5px;
+                display: flex;
+                background: rgb(78, 72, 72);
+                border-radius: 10px;
+            }
+            .main-app {
+                cursor: pointer;
+                background: white;
+                width: 100px;
+                border-radius: 5px;
+                color: black;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                margin-right: 15px;
+            }
+            .main-app:hover {
+                background: rgb(238, 237, 237);
+            }
+            .main-nav {
+                cursor: pointer;
+                background: white;
+                left: 50%;
+                transform: translate(-50%);
+                position: fixed;
+                width: auto;
+                border-radius: 5px;
+                color: black;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                margin-right: 15px;
+            }
+            .main-nav:hover {
+                background: rgb(238, 237, 237);
+            }
+            .nav-info {
+                margin-right: 20px;
+            }
+            .main-settings {
+                cursor: pointer;
+                background: white;
+                width: 100px;
+                border-radius: 5px;
+                color: black;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                margin-right: 15px;
+            }
+            .main-settings:hover {
+                background: rgb(238, 237, 237);
+            }
+            .main-pop-up {
+                margin-top: 5px;
+                left: 10px;
+                position: fixed;
+                width: auto;
+                display: none;
+                height: auto;
+                padding: 10px;
+                background: rgb(52, 48, 48);
+            }
+            .iframe-container {
+                top: 0;
+                left: 0;
+                background: rgba(75, 70, 70, 0.148);
+                width: 100%;
+                height: 100%;
+            }
+            #iframe {
+                width: 100%;
+                height: 100%;
+            }
+            #search {
+                background: rgba(0, 0, 0, 0.183);
+                color: white;
+                cursor: text;
+                width: 100%;
+                border-radius: 5px;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                margin-right: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main-system">
+            <div class="main-top">
+                <div class="main-app" onclick="openAppNav()">Apps</div>
+                <div class="main-nav" onclick="navSettings()">
+                    <span class="nav-info" id="current-date"></span>
+                    <span class="nav-info" id="current-time"></span>
+                    <span class="nav-info" id="current-charge">100%</span>
+                </div>
+                <div class="main-settings" onclick="openSettings()">Settings</div>
+                <div class="main-search">
+                    <input type="text" id="search" placeholder="Search...">
+                </div>
+            </div>
+            <div class="main-pop-up" id="content-main">
+                <div class="pop-ups" id="pop-apps"></div>
+                <div class="pop-ups" id="pop-time"></div>
+                <div class="pop-ups" id="pop-settings"></div>
+            </div>
+            <div class='iframe-container'>
+                <iframe id="iframe"></iframe>
+            </div>
+        </div>
+        <script>
+            window.onload = function() {
+                currentTime();
+                currentDate()
+            }
+
+            const searchInput = document.getElementById('search');
+            searchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    search()
+                }
+            })
+            function search() {
+                const url = searchInput.value
+                const urlPrefix = 'https://' + url
+
+                const iframe = document.getElementById('iframe');
+                iframe.src = urlPrefix;
+            }
+            let hour;
+            let min;
+
+            function currentTime() {
+                const date = new Date();
+                const gmtOffset = -7; // GMT-7 (Mountain Standard Time)
+                const utc = date.getTime() + (date.getTimezoneOffset() * 60000); // Get UTC time
+                const gmtTime = new Date(utc + (3600000 * gmtOffset)); // Apply GMT offset
+
+                const hours = gmtTime.getHours();
+                const minutes = gmtTime.getMinutes();
+
+                const timeElement = document.getElementById('current-time');
+                timeElement.innerText = hours + ':' + minutes;
+            };
+
+            setInterval(currentTime, 100)
+
+            function currentDate() {
+                const month = new Date().getMonth() + 1;
+                const day = new Date().getDate();
+                const year = new Date().getFullYear().toString().slice(-2);
+
+                const dateElement = document.getElementById('current-date');
+                dateElement.innerText = month + '/' + day + '/' + year;
+            };
+
+            function currentCharge() {};
+            function openAppNav() {};
+            function navSettings() {};
+            function openSettings() {};
+        </script>
+    </body>
+</html>
