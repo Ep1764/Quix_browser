@@ -38,24 +38,16 @@
                 background: rgb(238, 237, 237);
             }
             .main-nav {
-                cursor: pointer;
-                background: white;
+                background: rgba(0, 0, 0, 0.516);
                 left: 50%;
                 transform: translate(-50%);
                 position: fixed;
                 width: auto;
                 border-radius: 5px;
-                color: black;
+                color: white;
                 text-align: center;
                 font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 font-weight: bolder;
-                margin-right: 15px;
-            }
-            .main-nav:hover {
-                background: rgb(238, 237, 237);
-            }
-            .nav-info {
-                margin-right: 20px;
             }
             .main-settings {
                 cursor: pointer;
@@ -71,21 +63,38 @@
             .main-settings:hover {
                 background: rgb(238, 237, 237);
             }
+            #current-date {
+                margin-right: 20px;
+            }
+            #settings.active {
+                background: black;
+            }
             .main-pop-up {
-                margin-top: 5px;
-                left: 10px;
-                position: fixed;
-                width: auto;
+                left: 0;
+                top: 0;
+                width: 100%;
                 display: none;
-                height: auto;
-                padding: 10px;
+                height: 100%;
                 background: rgb(52, 48, 48);
             }
-            .iframe-container {
+            #content-main.active {
+                background: black;
+            }
+
+            .pop-ups {
+                width: 100%;
+                overflow-y: scroll;
+                padding: 10px;
+                height: 90%;
+                background: rgba(0, 0, 0, 0.423);
+                border-radius: 10px;
+            }
+
+            #iframe-container {
                 top: 0;
                 left: 0;
-                background: rgba(75, 70, 70, 0.148);
                 width: 100%;
+                display: flex;
                 height: 100%;
             }
             #iframe {
@@ -103,81 +112,651 @@
                 font-weight: bolder;
                 margin-right: 15px;
             }
+            .pop-header {
+                width: 100%;
+                display: block;
+                background: rgba(128, 128, 128, 0.545);
+                border-radius: 10px;
+                color: white;
+                margin-bottom: 20px;
+            }
+            .pop-section {
+                width: 100%;
+                height: auto;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 5px;
+                display: flex;
+                background: rgba(128, 128, 128, 0.455);
+                margin-bottom: 5px;
+                color: white;
+            }
+            span {
+                font-weight: bolder;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin-right: 10px;
+            }
+            #tab-name {
+                background: rgba(0, 0, 0, 0.183);
+                color: white;
+                cursor: text;
+                border-radius: 5px;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+            }
+            .main-backward-forward {
+                background: rgba(0, 0, 0, 0.183);
+                color: white;
+                cursor: pointer;
+                width: auto;
+                border-radius: 5px;
+                display: flex;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                margin-right: 15px;
+            }
+
+            .main-forward-backward {
+                position: fixed;
+                right: 0;
+                display: flex;
+            }
+            #coord {
+                position: fixed;
+                z-index: 6;
+                width: auto;
+                height: auto;
+                padding: 5px;
+                background: white;
+            }
+            select {
+                background: rgba(0, 0, 0, 0.183);
+                color: white;
+                cursor: pointer;
+                border-radius: 5px;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                width: 100px;
+            }
+            .main-tabs {
+                cursor: pointer;
+                background: white;
+                width: 100px;
+                border-radius: 5px;
+                color: black;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                margin-right: 15px;
+            }
+            .main-tabs:hover {
+                background: rgb(238, 237, 237);
+            }
+            .tab-top {
+                top: 0;
+                width: 100%;
+                background: rgb(78, 72, 72);
+                padding: 5px;
+                display: none;
+                justify-content: center;
+                margin-bottom: 5px;
+                overflow-x: scroll;
+            }
+            #tab-containers {
+                width: auto;
+                display: flex;
+                height: auto;
+                padding: 5px;
+                background: rgba(0, 0, 0, 0.4)
+            }
+            .tab {
+                padding: 5px;
+                background: white;
+                margin: 0 5px;
+                border-radius: 10px;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                color: black;
+                cursor: pointer;
+            }
+            .tab:hover {
+                background: rgb(238, 237, 237);
+            }
+            #alert {
+                top: 10%;
+                left: 50%;
+                transform: translate(-50%);
+                position: fixed;
+                width: 500px;
+                height: 80px;
+                background: rgba(128, 128, 128, 0.601);
+                border-radius: 10px;
+                z-index: 10;
+                display: none;
+            }
+            .alert-header {
+                text-align: center;
+                margin-bottom: 10px;
+                color: red;
+                font-weight: bolder;
+            }
+            .alert-body {
+                text-align: center;
+                font-size: 15px;
+            }
+            .alert-button {
+                flex: 1;
+                display: flex;
+            }
+            .button-alert {
+                height: auto;
+                border: none;
+                margin: 0 5px;
+                width: 100%;
+                background: grey;
+                color: white;
+            }
+            .black_button {
+                cursor: pointer;
+                background: rgba(0, 0, 0, 0.183);
+                width: 100px;
+                border-radius: 5px;
+                color: white;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+            }
+            .login-system {
+                left: 0;
+                top: 0;
+                width: 100%;
+                position: fixed;
+                display: none;
+                height: 100%;
+                background: rgb(75, 72, 72)
+            }
+            .login-center {
+                top: 50%;
+                left: 50%;
+                width: 259px;
+                transform: translate(-50%, -50%);
+                padding: 10px;
+                border-radius: 8px;
+                background: rgba(0, 0, 0, 0.423);
+                position: fixed;
+                display: block;
+                justify-content: center;
+                text-align: center;
+                color: white;
+                font-weight: bolder;
+                margin-bottom: 15px;
+                margin-top: 10px;
+            }
+            .inputText {
+                background: rgba(0, 0, 0, 0.183);
+                color: white;
+                cursor: text;
+                border-radius: 5px;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+                margin-bottom: 5px;
+            }
+            .login-button {
+                width: 100%;
+                height: 30px;
+                background: rgba(49, 51, 52, 0.612);
+                color: white;
+                font-weight: bolder;
+                font-size: 15px;
+            }
+            .return-button {
+                cursor: pointer;
+                background: white;
+                width: 100px;
+                border-radius: 5px;
+                height: 20px;
+                color: black;
+                top: 5px;
+                left: 5px;
+                position: absolute;
+                text-align: center;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bolder;
+            }
+            .action-button {
+                background: rgb(217, 71, 71);
+                padding: 5px;
+                margin: 0 5px;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-weight: bolder;
+                cursor: pointer;
+            }
+            .support-image {
+                width: 50px;
+                height: 50px;
+                margin: 0 5px;
+            }
         </style>
+        <title id="tab-title">Quix_Browser</title>
+        <link id="tabIcon" rel="icon" type="image/png" href="file:///home/chronos/u-f6a21dc75df994603a64c953a5f544df97dd0a10/MyFiles/Downloads/Screenshot%202024-01-28%205.42.32%20PM.png">
     </head>
     <body>
+        <div id="alert">
+            <div class="alert-header">
+                <span id="alert-type"></span>
+            </div>
+            <div class="alert-body">
+                <span id="alert-message"></span>
+            </div>
+            <div class="alert-button">
+                <button class="button-alert" onclick="understood()">Understood</button>
+                <button class="button-alert" onclick="investigate()">Investigate</button>
+            </div>
+        </div>
         <div class="main-system">
+            
+            <div class="tab-top" id="main-tab">
+                <div id="tab-containers">
+                </div>
+            </div>
             <div class="main-top">
-                <div class="main-app" onclick="openAppNav()">Apps</div>
                 <div class="main-nav" onclick="navSettings()">
                     <span class="nav-info" id="current-date"></span>
                     <span class="nav-info" id="current-time"></span>
-                    <span class="nav-info" id="current-charge">100%</span>
                 </div>
-                <div class="main-settings" onclick="openSettings()">Settings</div>
+                <div class="main-settings" id="settings" onclick="openSettings()">Settings</div>
+                <div class="main-tabs" id="tabs" onclick="openTabs()">Tabs</div>
                 <div class="main-search">
-                    <input type="text" id="search" placeholder="Search...">
+                    <input type="text" id="search" placeholder="[example] /.com/.io/.org">
+                </div>
+                <div class="main-forward-backward">
+                    <div class="main-backward-forward" onclick="page('back')"><span><</span></div>
+                    <div class="main-backward-forward" onclick="page('reload')"><span>Reload</span></div>
+                    <div class="main-backward-forward" onclick="page('forward')"><span>></span></div>
                 </div>
             </div>
+
             <div class="main-pop-up" id="content-main">
-                <div class="pop-ups" id="pop-apps"></div>
-                <div class="pop-ups" id="pop-time"></div>
-                <div class="pop-ups" id="pop-settings"></div>
+                <div class="pop-ups" id="pop-time">
+                    <div class="pop-header"><h2>Adjust Time</h2></div>
+                    <div class="pop-section">
+                        <span>Include Seconds</span> <input type="checkbox" id="includeSec">
+                    </div>
+                    <div class="pop-section">
+                        <span>Include Date</span> <input type="checkbox" id="includeDate">
+                    </div>
+                    <div class="pop-header"><h2>Profile</h2></div>
+                    <div class="pop-section">
+                        <span>User: <span id="user-text" style="color: rgb(162, 157, 157);">Quix_Lume</span> </span>
+                        <span>status: <span id="status-text" style="color: rgb(151, 245, 120);">Online</span> </span>
+                        <span>Key: <span id="key-text" style="color: rgb(162, 157, 157);">Admin</span> </span>
+                        <span>FPS: <span id="fps-text" style="color: rgb(162, 157, 157);"></span></span>
+                    </div>
+                    <div class="pop-section">
+                        <span>Action: </span>
+                        <button class="action-button">Sign Out</button>
+                        <button class="action-button">Edit Profile</button>
+                    </div>
+                    <div class="pop-header"><h2>About</h2></div>
+                    <div class="pop-section">
+                        <span>Author: <span style="color: rgb(162, 157, 157);">QuixLume</span></span>
+                    </div>
+                    <div class="pop-section">
+                        <span>Description: <span style="color: rgb(162, 157, 157);">What is Quix_Browser? Quix_Browser is a "Semi-Browser" using iframe to display the searched content!, developed by a 16 year old kid (QuixLume) who grew up having to deal with blocked games on a school computer, we all have a common enemy; who is this enemy? well you might know GoGuardian, a 3rd party extension used by most school districs to prevent kids from doing anything non school related on a enterprised enrolled device.What does Quix_Browser offer? Quix_Browser offers multiple security protection; this includes the "Change Tab Title" feature that allows you to rename the tab title, with this feature a teacher might not recongnize what the tab really is meaning the teacher won't close your tab using GoGuardian!. Note that the dis-advantage of using iframe is that some websites don't allow iframe thus preventing you from accessing them; here's a few websites that don't allow iframe: <span style="color: red; font-weight: bold;">Youtube, Instagram, Facebook, Twitter, Tiktok</span>and much more, as sad as it seems Quix_Browser promises to garenteed access to blocked ".io" games!!!</span> </span>
+                    </div>
+                </div>
+                <div class="pop-ups" id="pop-settings">
+                    <div class="pop-header"><h2>Settings</h2></div>
+                    <div class="pop-section">
+                        <span>Tab Title: </span> <input type="text" class="inputText" id="tab-name" placeholder="Tab Title...">
+                    </div>
+                    <div class="pop-section">
+                        <span>Tab Icon: </span> <input type="text" class="inputText" id="tab-icon" placeholder="Tab Icon Url">
+                    </div>
+                    <div class="pop-section">
+                        <span>Color Theme: </span> <select id="colorTheme"><option id="darkTheme">Dark</option> <option id="lightTheme">Light</option></select>
+                    </div>
+                    <div class="pop-section">
+                        <span>Download Status: </span> <button class="black_button" onclick="downloadFile()">Status</button>
+                    </div>
+                    <div class="pop-section">
+                        <span>Login: </span> <button class="black_button" onclick="login()">Login</button>
+                    </div>
+                    <div class="pop-section">
+                        <span>Admin Login: </span> <button class="black_button" onclick="login2()">Login</button>
+                    </div>
+                    <div class="pop-header"><h2>Alternative Access</h2></div>
+                    <div class="pop-section">
+                        <span>File Alternative: <span style="color: rgba(162, 157, 157)">If for some reason you can't access Quix_Browser on GitHub you can still access Quix_Browser via file; download the <span style="color: lightskyblue; cursor: pointer;" onclick="downloadAlt()">file.html</span>and go to your files and open it! if you're struggling with this process you can watch a tutorial on my <span style="color: rgb(248, 76, 76); cursor: pointer;"><link href="https://youtube.com/quix_lume/">Youtube</link> </span></span></span>
+                    </div>
+                    <div class="pop-header"><h2>Support/Concerns</h2></div>
+                    <div class="pop-section">
+                        <span>Socials:</span>
+                        <img class="support-image" src="file:///media/fuse/drivefs-928cdffeb1e21c52b7a91e150400c62b/root/youtube.png">
+                        <img class="support-image" src="file:///media/fuse/drivefs-928cdffeb1e21c52b7a91e150400c62b/root/discord.png">
+                        <img class="support-image" src="file:///media/fuse/drivefs-928cdffeb1e21c52b7a91e150400c62b/root/github.png">
+                    </div>
+                    <div class="pop-section">
+                        <span>Support: <span style="color: rgb(162, 157, 157);">Please check out my <span style="color: rgb(248, 76, 76); cursor: pointer;"><link href="https://youtube.com/quix_lume/">Youtube</link> </span>, I make videos about Coding; Like And Subscribe!. Also check out my <span style="color: rgb(224, 208, 208); cursor: pointer;"><link href="https://youtube.com/quix_lume/">GitHub</link> </span>for more projects I made. Join my <span style="color: rgb(60, 102, 201); cursor: pointer;"><link href="https://youtube.com/quix_lume/">Discord Community</link> </span>where you can hang out and chat with other peoples! and discover future content from QuixLume!</span></span>
+                    </div>
+                    <div class="pop-section">
+                        <span>Concerns: <span style="color: rgb(162, 157, 157);">If for any reason you believe that your security/personal data isn't secured contact me at my discord(quix_lume) and I will convince you that Quix_Browser is 100% safe!</span></span>
+                    </div>
+                </div>
             </div>
-            <div class='iframe-container'>
-                <iframe id="iframe"></iframe>
+            <div class="login-system" id="login">
+                <div class="return-button" onclick="goback()">Return</div>
+                <div class="login-center">
+                    <div class="login-title"><span>Login</span></div>
+                    <div class="login-inputs">
+                        <input type="text" class="inputText" id="user" placeholder="Username">
+                        <input type="text" class="inputText" id="pass" placeholder="Password">
+                        <button class="login-button" onclick="signIn()">Sign In</button>
+                    </div>
+                </div>
             </div>
+            <div id='iframe-container'></div>
         </div>
         <script>
             window.onload = function() {
-                currentTime();
-                currentDate()
+                getLiveTime();
+                currentDate();
             }
+            function goback() {
+                const loginPage = document.getElementById('login');
+                loginPage.style.display = 'none'
+            }
+            let username = '';
+            let password = '';
+
+            function signIn() {
+                const user = document.getElementById('user').value
+                const pass = document.getElementById('pass').value
+
+                if (user && pass) {
+                    username = user;
+                    localStorage.setItem('username', username);
+                    password = pass;
+                    localStorage.setItem('password', password);
+                    acceptLogin()
+                }
+            }
+            function acceptLogin() {
+                alarm(`Accepted Username & Password; ${localStorage.getItem('username')}; ${localStorage.getItem('password')}`)
+                goback()
+            }
+            const TabIconSearch = document.getElementById('tab-icon');
+
+// Add an event listener for the keyup event on the search input
+TabIconSearch.addEventListener('keyup', function(event) {
+  // Check if the Enter key is pressed
+  if (event.key === 'Enter') {
+    // Get the value of the search input
+    const inputValue = TabIconSearch.value;
+    
+    // Create a new anchor element to follow the URL
+    const anchor = document.createElement('a');
+    anchor.href = inputValue;
+    
+    // Retrieve the favicon of the resulting webpage
+    const faviconUrl = `https://www.google.com/s2/favicons?domain=${anchor.hostname}`;
+    
+    // Create an image element to display the retrieved favicon
+    const tabIcon = document.getElementById('tabIcon')
+    tabIcon.href = faviconUrl;
+    
+    // Append the image element to the document body
+  }
+});
+            function login() {
+                const loginPage = document.getElementById('login');
+
+                if (loginPage) {
+                    if (loginPage.style.display === 'flex') {
+                        loginPage.style.display = 'none'
+                    } else {
+                        loginPage.style.display = 'flex'
+                    }
+                }
+            }
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === "ArrowLeft") {
+                    alarm(`LocalStorage SetItem: ${localStorage.getItem('includeDae')}`)
+                }
+            })
+            function startTimer() {
+                const date = new Date();
+                let seconds = 0;
+                date.seconds;
+                
+            }
+            let user = '';
+
+            function alarm(message, duration) {
+                const text = message;
+                if (!duration) {
+                    return alert(text)
+                } else {
+                    setTimeout(() => {
+                        return alert(text)
+                    }, duration)
+                }
+            }
+            var frameCount = 0;
+            var fpsStartTime = 0;
+            var fpsDisplay = document.getElementById("fps-text");
+ 
+            function updateDisplay() {
+                var currentTime = new Date().getTime();
+                var fpsElapsedTime = (currentTime - fpsStartTime) / 1000;
+                var fps = frameCount / fpsElapsedTime;
+                fpsDisplay.innerHTML = fps.toFixed(0)
+                frameCount = 0;
+                fpsStartTime = currentTime;
+            }
+            function updateFrame() {
+                frameCount++;
+                requestAnimationFrame(updateFrame);
+            }
+ 
+            setInterval(updateDisplay, 1000);
+            updateFrame();
+            
+            function downloadAlt() {
+                const fileContent = '';
+                const element = document.createElement("a");
+                const file = new Blob([fileContent], {type: 'html/plain'});
+                element.href = URL.createObjectURL(file);
+                element.download = "quix_browser.html";
+                document.body.appendChild(element);
+                element.click();
+            }
+            function openTabs() {
+                addTextToContent('Called Function: openTabs()');
+                const mainTab = document.getElementById('main-tab')
+                if (mainTab) {
+                    if (mainTab.style.display === 'block') {
+                        mainTab.style.display = 'none'
+                    } else {
+                        mainTab.style.display = 'block'
+                    }
+                }
+            }
+            const Iframe = document.getElementById('iframe');
+
+            function page(action) {
+                if (action == 'reload') {
+                    window.location.reload();
+                } else if (action == 'back') {
+                    window.history.back()
+                } else if (action == 'forward') {
+                    window.history.forward();
+                } else {
+                    alarm('An Error Had Occoured!');
+                }
+            }
+
+            const tabName = document.getElementById('tab-name');
+            tabName.value = localStorage.getItem('tabName', tabName.value)
+
+            document.getElementById('tab-title').innerText = localStorage.getItem('tabName', tabName.value);
+
+            tabName.addEventListener('input', function() {
+                const tabElement = document.getElementById('tab-title')
+                tabElement.innerText = tabName.value
+                localStorage.setItem('tabName', tabName.value);
+
+                if (tabName.value == '') {
+                    localStorage.setItem('tabName', 'Quix_Browser');
+                    tabElement.innerText = 'Quix_Browser'
+                }
+            })
 
             const searchInput = document.getElementById('search');
             searchInput.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
-                    search()
+                    search();
+                }
+            });
+            document.addEventListener('keydown', function(event) {
+                const includeDate = document.getElementById('includeDate');
+                if (event.keyCode === 27) {
+                    alarm('Checkbox State: ' + includeDate.value);
+                } else if (event.key === 'F') {
+                    localStorage.clear();
                 }
             })
-            function search() {
-                const url = searchInput.value
-                const urlPrefix = 'https://' + url
+            let textContent = "";
 
-                const iframe = document.getElementById('iframe');
-                iframe.src = urlPrefix;
+            function addTextToContent(text) {
+                textContent += text + "\n";
             }
-            let hour;
-            let min;
 
-            function currentTime() {
+            function downloadFile() {
+                const element = document.createElement("a");
+                const file = new Blob([textContent], {type: 'text/plain'});
+                element.href = URL.createObjectURL(file);
+                element.download = "text_file.txt";
+                document.body.appendChild(element);
+                element.click();
+            }
+         
+            const iframes = [];
+
+            function search() {
+                const url = searchInput.value;
+                addTextToContent('Called Function: search(): ' + url);
+                const urlPrefix = 'https://' + url;
+
+                const iframe = document.createElement('iframe');
+                iframe.id = 'iframe'
+                iframe.src = urlPrefix;
+                iframe.style.display = 'none';
+
+                iframes.push(iframe);
+                addTextToContent(`Array Pushed: ${iframe.src}`);
+
+                const iframecontainer = document.getElementById("iframe-container");
+                iframecontainer.append(iframe)
+
+                addTab(iframes.length - 1);
+            }
+
+            function addTab(index) {
+                addTextToContent(`Called Function: addTab(${index})`);
+                const title = iframes[index].src;
+                const tabClass = document.createElement('div');
+                tabClass.className = 'tab';
+                tabClass.innerText = title.toString().slice(8)
+
+                tabClass.addEventListener('click', function() {
+                    showIframe(index);
+                });
+                tabClass.addEventListener('dblclick', function() {
+                    deleteTab(index);
+                });
+
+                const tabContainer = document.getElementById('tab-containers');
+                tabContainer.appendChild(tabClass);
+            }
+
+            function showIframe(index) {
+                addTextToContent(`Called Function: showIframe(${index})`);
+                iframes.forEach(function(iframe) {
+                    iframe.style.display = 'none';
+                });
+
+                iframes[index].style.display = 'block';
+            }
+
+            function deleteTab(index) {
+                addTextToContent(`Called Function: deleteTab(${index})`);
+                const tabContainer = document.getElementById('tab-containers');
+                tabContainer.removeChild(tabContainer.childNodes[index]);
+
+                const iframe = iframes.splice(index, 1)[0];
+                iframe.parentNode.removeChild(iframe);
+            }
+
+            function getLiveTime() {
                 const date = new Date();
-                const gmtOffset = -7; // GMT-7 (Mountain Standard Time)
-                const utc = date.getTime() + (date.getTimezoneOffset() * 60000); // Get UTC time
-                const gmtTime = new Date(utc + (3600000 * gmtOffset)); // Apply GMT offset
+                const utcOffset = -7 * 60;
+                const localOffset = date.getTimezoneOffset();
 
-                const hours = gmtTime.getHours();
-                const minutes = gmtTime.getMinutes();
+                const gmtMinus7Time = new Date(date.getTime() + (localOffset + utcOffset) * 60000);
 
+                let hours = gmtMinus7Time.getHours();
+                const minutes = gmtMinus7Time.getMinutes();
+                const seconds = gmtMinus7Time.getSeconds();
+
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours %= 12;
+                hours = hours || 12;
+
+                const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+                const includeSec = document.getElementById("includeSec")
                 const timeElement = document.getElementById('current-time');
-                timeElement.innerText = hours + ':' + minutes;
+                timeElement.innerText = `${hours}:${formattedMinutes}.${seconds} ${ampm}`;
+           }
+
+           setInterval(getLiveTime, 100);
+
+           function currentDate() {
+               addTextToContent('Called Function: currentDate()');
+               const month = new Date().getMonth() + 1;
+               const day = new Date().getDate();
+               const year = new Date().getFullYear().toString().slice(-2);
+
+               const dateElement = document.getElementById('current-date');
+
+               if (includeDate.checked == true) {
+                dateElement.innerText = `${month}/${day}/${year}`;
+               } else if (includeDate.checked == false) {
+                dateElement.innerText = '';
+               }
             };
+            setInterval(currentDate, 100);
 
-            setInterval(currentTime, 100)
+            function openSettings() {
+                addTextToContent('Called Function: openSettings()');
+                const mainPop = document.getElementById('content-main');
+                if (mainPop) {
+                    if (mainPop.style.display === 'flex') {
+                        mainPop.style.display = 'none'
+                    } else {
+                        mainPop.style.display = 'flex'
+                    }
+                }
+            }
 
-            function currentDate() {
-                const month = new Date().getMonth() + 1;
-                const day = new Date().getDate();
-                const year = new Date().getFullYear().toString().slice(-2);
-
-                const dateElement = document.getElementById('current-date');
-                dateElement.innerText = month + '/' + day + '/' + year;
-            };
-
-            function currentCharge() {};
-            function openAppNav() {};
-            function navSettings() {};
-            function openSettings() {};
         </script>
     </body>
 </html>
