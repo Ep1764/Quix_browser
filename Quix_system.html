@@ -494,27 +494,21 @@
             }
             const TabIconSearch = document.getElementById('tab-icon');
 
-// Add an event listener for the keyup event on the search input
-TabIconSearch.addEventListener('keyup', function(event) {
-  // Check if the Enter key is pressed
-  if (event.key === 'Enter') {
-    // Get the value of the search input
-    const inputValue = TabIconSearch.value;
+
+            TabIconSearch.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const inputValue = TabIconSearch.value;
     
-    // Create a new anchor element to follow the URL
-    const anchor = document.createElement('a');
-    anchor.href = inputValue;
+                    const anchor = document.createElement('a');
+                    anchor.href = inputValue;
     
-    // Retrieve the favicon of the resulting webpage
-    const faviconUrl = `https://www.google.com/s2/favicons?domain=${anchor.hostname}`;
+                    const faviconUrl = `https://www.google.com/s2/favicons?domain=${anchor.hostname}`;
     
-    // Create an image element to display the retrieved favicon
-    const tabIcon = document.getElementById('tabIcon')
-    tabIcon.href = faviconUrl;
+                    const tabIcon = document.getElementById('tabIcon')
+                    tabIcon.href = faviconUrl;
     
-    // Append the image element to the document body
-  }
-});
+                }
+            });
             function login() {
                 const loginPage = document.getElementById('login');
 
@@ -525,18 +519,6 @@ TabIconSearch.addEventListener('keyup', function(event) {
                         loginPage.style.display = 'flex'
                     }
                 }
-            }
-
-            document.addEventListener('keydown', function(event) {
-                if (event.key === "ArrowLeft") {
-                    alarm(`LocalStorage SetItem: ${localStorage.getItem('includeDae')}`)
-                }
-            })
-            function startTimer() {
-                const date = new Date();
-                let seconds = 0;
-                date.seconds;
-                
             }
             let user = '';
 
@@ -603,7 +585,11 @@ TabIconSearch.addEventListener('keyup', function(event) {
                     alarm('An Error Had Occoured!');
                 }
             }
-
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'ArrowDown') {
+                    alert('Command Prompts: Active;')
+                }
+            })
             const tabName = document.getElementById('tab-name');
             tabName.value = localStorage.getItem('tabName', tabName.value)
 
@@ -648,7 +634,17 @@ TabIconSearch.addEventListener('keyup', function(event) {
                 document.body.appendChild(element);
                 element.click();
             }
-         
+            const docElement = document.documentElement;
+
+if (docElement.requestFullscreen) {
+  docElement.requestFullscreen();
+} else if (docElement.mozRequestFullScreen) { // Firefox
+  docElement.mozRequestFullScreen();
+} else if (docElement.webkitRequestFullscreen) { // Chrome, Safari, and Opera
+  docElement.webkitRequestFullscreen();
+} else if (docElement.msRequestFullscreen) { // IE/Edge
+  docElement.msRequestFullscreen();
+}
             const iframes = [];
 
             function search() {
@@ -659,6 +655,7 @@ TabIconSearch.addEventListener('keyup', function(event) {
                 const iframe = document.createElement('iframe');
                 iframe.id = 'iframe'
                 iframe.src = urlPrefix;
+                iframe.setAttribute('allowfullscreen', '');
                 iframe.style.display = 'none';
 
                 iframes.push(iframe);
