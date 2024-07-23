@@ -654,12 +654,7 @@ if (docElement.requestFullscreen) {
 
                 const iframe = document.createElement('iframe');
                 iframe.id = 'iframe'
-                iframe.sandbox = "allow-same-origin allow-scripts"
                 iframe.src = urlPrefix;
-iframe.addEventListener('beforeunload', function(event) {
-    // Prevent navigation away from the iframe
-    event.preventDefault();
-});
                 iframe.setAttribute('allowfullscreen', '');
                 iframe.style.display = 'none';
 
