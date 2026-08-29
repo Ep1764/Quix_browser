@@ -33,6 +33,7 @@
 
 /* Dark theme (default) */
 :root, :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg:            #0b0e14;
   --surface:       #141821;
   --surface-2:     #1b2130;
@@ -56,6 +57,7 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
   --bg:            #eef1f7;
   --surface:       #ffffff;
   --surface-2:     #f2f5fa;
@@ -140,8 +142,8 @@ svg { display: block; flex: none; }
 .app {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
-  height: 100dvh;
-  height: 100vh;
+  height: 100vh;          /* fallback first... */
+  height: 100dvh;         /* ...so dvh wins where supported (mobile URL bar) */
 }
 
 /* ---------- chrome bar ---------- */
@@ -170,7 +172,7 @@ svg { display: block; flex: none; }
 }
 .icon-btn:hover:not(:disabled) { background: var(--surface-3); color: var(--text); }
 .icon-btn:active:not(:disabled) { transform: scale(.93); }
-.icon-btn:disabled { opacity: .32; cursor: default; }
+.icon-btn:disabled { opacity: .45; cursor: default; }
 .icon-btn.is-on { background: var(--accent-soft); color: var(--accent); }
 
 /* ---------- omnibox ---------- */
@@ -267,8 +269,9 @@ svg { display: block; flex: none; }
   align-items: center;
   gap: var(--s2);
   flex: 0 1 190px;
-  min-width: 58px;
+  min-width: 76px;
   max-width: 190px;
+  overflow: hidden;
   height: 30px;
   padding: 0 var(--s1) 0 var(--s3);
   border-radius: var(--r2);
@@ -336,7 +339,7 @@ svg { display: block; flex: none; }
   width: 100%;
   height: 100%;
   border: 0;
-  background: #000;
+  background: var(--bg);
   display: block;
 }
 .frame-layer iframe[hidden] { display: none !important; }
@@ -348,8 +351,7 @@ svg { display: block; flex: none; }
   z-index: 5;
   display: grid;
   place-items: center;
-  background: rgba(4, 6, 12, .55);
-  backdrop-filter: blur(2px);
+  background: var(--scrim);
   cursor: pointer;
   animation: fade var(--t-med);
 }
@@ -466,6 +468,8 @@ svg { display: block; flex: none; }
 
 .card {
   position: relative;
+  cursor: pointer;
+  user-select: none;
   display: flex;
   flex-direction: column;
   gap: var(--s2);
@@ -500,6 +504,8 @@ svg { display: block; flex: none; }
 .card-name {
   font-size: var(--fs-md);
   font-weight: 600;
+  min-width: 0;
+  padding-right: var(--s5);   /* clear of the favourite star */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -561,12 +567,14 @@ svg { display: block; flex: none; }
 .row {
   display: flex;
   align-items: center;
-  gap: var(--s4);
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s4);
   padding: var(--s3) var(--s4);
   border-bottom: 1px solid var(--border);
 }
+.row-text { flex: 1 1 260px; }
 .row:last-child { border-bottom: none; }
-.row-text { flex: 1 1 auto; min-width: 0; }
+.row-text { min-width: 0; }
 .row-text b { display: block; font-size: var(--fs-md); font-weight: 600; }
 .row-text small {
   display: block;
@@ -579,7 +587,9 @@ svg { display: block; flex: none; }
 
 .field {
   height: 32px;
-  min-width: 180px;
+  min-width: 0;
+  width: 180px;
+  max-width: 100%;
   padding: 0 var(--s3);
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -625,7 +635,7 @@ select.field { cursor: pointer; padding-right: var(--s2); }
   top: 2px; left: 2px;
   width: 17px; height: 17px;
   border-radius: 50%;
-  background: var(--text-faint);
+  background: var(--text-dim);
   transition: transform var(--t-med), background var(--t-fast);
 }
 .switch[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
@@ -716,7 +726,7 @@ select.field { cursor: pointer; padding-right: var(--s2); }
   bottom: var(--s5);
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 80;            /* below the modal scrim (90), not above it */
   display: flex;
   flex-direction: column;
   gap: var(--s2);
@@ -888,6 +898,7 @@ kbd {
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--warn)"><use href="#i-warn"/></svg>
       <span class="grow">Still blank? <b id="hint-host"></b> may not allow embedding. A browser never tells a page which it is &mdash; but opening it directly always works.</span>
       <button class="btn primary" id="hint-open">Open in a real tab</button>
+      <button class="btn" id="hint-ok">It&rsquo;s working</button>
       <button class="icon-btn" id="hint-dismiss" aria-label="Dismiss" style="width:28px;height:28px"></button>
     </div>
 
@@ -965,7 +976,7 @@ kbd {
         <div class="panel-head">
           <div>
             <h2>Settings</h2>
-            <p>Everything here is stored only in this browser’s <code>localStorage</code>. Nothing is uploaded anywhere.</p>
+            <p>Settings live only in this browser’s <code>localStorage</code> — there is no server and no account. The one exception is called out on the Tab icon row below.</p>
           </div>
           <button class="btn" id="btn-close-settings">Done</button>
         </div>
@@ -1006,7 +1017,7 @@ kbd {
               <div class="row-ctl"><input type="text" class="field" id="set-title" placeholder="Quix Browser" maxlength="120"></div>
             </div>
             <div class="row">
-              <div class="row-text"><b>Tab icon</b><small>Paste any site (e.g. <code>google.com</code>) to borrow its favicon.</small></div>
+              <div class="row-text"><b>Tab icon</b><small>Paste any site (e.g. <code>google.com</code>) to borrow its favicon. This is the one feature that leaves your browser — the domain you type is sent to Google’s favicon service to fetch the image. Leave it blank to keep the built-in icon and make no request at all.</small></div>
               <div class="row-ctl"><input type="text" class="field" id="set-icon" placeholder="example.com" autocomplete="off"></div>
             </div>
           </div>
@@ -1081,7 +1092,8 @@ kbd {
             <div>
               <b>Shortcuts never steal a game’s keys.</b> Every shortcut below needs <kbd>Ctrl</kbd> or <kbd>Alt</kbd>,
               and all of them are ignored while a game frame has focus — so <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>,
-              arrows, <kbd>Space</kbd> and <kbd>F</kbd> always reach the game.
+              arrows, <kbd>Space</kbd> and <kbd>F</kbd> always reach the game. Once a game holds focus its keystrokes go
+              straight to it and never reach this page at all, so click the toolbar to come back.
               <div class="shortcut-list">
                 <div><span>New tab</span><span><kbd>Ctrl</kbd> <kbd>T</kbd></span></div>
                 <div><span>Close tab</span><span><kbd>Ctrl</kbd> <kbd>W</kbd></span></div>
@@ -1091,7 +1103,8 @@ kbd {
                 <div><span>Back / forward</span><span><kbd>Alt</kbd> <kbd>←</kbd> <kbd>→</kbd></span></div>
                 <div><span>Game library</span><span><kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>H</kbd></span></div>
                 <div><span>Settings</span><span><kbd>Ctrl</kbd> <kbd>,</kbd></span></div>
-                <div><span>Leave a game frame (release keyboard)</span><span><kbd>Esc</kbd></span></div>
+                <div><span>Release the mouse from a game <em>(browser-handled)</em></span><span><kbd>Esc</kbd></span></div>
+                <div><span>Return to Quix from a game</span><span>click the toolbar</span></div>
               </div>
             </div>
           </div>
@@ -1279,7 +1292,9 @@ const DEFAULTS = {
   session: []
 };
 
-let settings = Object.assign({}, DEFAULTS);
+function freshDefaults() { return JSON.parse(JSON.stringify(DEFAULTS)); }
+
+let settings = freshDefaults();
 
 function loadSettings() {
   try {
@@ -1288,7 +1303,16 @@ function loadSettings() {
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === "object") {
       Object.keys(DEFAULTS).forEach(function (k) {
-        if (parsed[k] !== undefined && parsed[k] !== null) settings[k] = parsed[k];
+        const want = DEFAULTS[k];
+        const got = parsed[k];
+        if (got === undefined || got === null) return;
+        /* Only accept a stored value that matches the shape of the default. */
+        if (Array.isArray(want)) { if (Array.isArray(got)) settings[k] = got; return; }
+        if (want !== null && typeof want === "object") {
+          if (typeof got === "object" && !Array.isArray(got)) settings[k] = got;
+          return;
+        }
+        if (typeof got === typeof want) settings[k] = got;
       });
     }
   } catch (e) {
@@ -1296,10 +1320,15 @@ function loadSettings() {
   }
 }
 
+/* Set by Reset so the beforeunload writer cannot resurrect the cleared key. */
+let storageDisabled = false;
+
 let saveTimer = null;
 function saveSettings() {
   clearTimeout(saveTimer);
+  if (storageDisabled) return;
   saveTimer = setTimeout(function () {
+    if (storageDisabled) return;
     try { localStorage.setItem(STORE_KEY, JSON.stringify(settings)); }
     catch (e) { log("settings save failed: " + e.message); }
   }, 180);
@@ -1490,14 +1519,32 @@ function makeTab(url, opts) {
     nav: 0,          // navigation token, guards stale load events
     timer: null,
     hintTimer: null,
-    aliveTimer: null,
-    alive: false,     /* the user has demonstrably interacted with the frame */
+    alive: false,     /* the user has interacted with this frame since it loaded */
     closed: false,
     frame: null,
     shield: null
   };
   tabs.push(tab);
-  if (url) navigate(tab, url, { push: true, silent: o.silent });
+
+  if (url && o.defer) {
+    /* Deferred: remember where this tab points, but don't spend a network
+       request or a renderer on it until the user actually looks at it. */
+    const clean = normalizeUrl(url);
+    if (!clean) { tabs.splice(tabs.indexOf(tab), 1); return null; }
+    tab.url = clean;
+    tab.title = hostOf(clean);
+    tab.history = [clean];
+    tab.hi = 0;
+    renderTabs();
+    return tab;
+  }
+
+  if (url && !navigate(tab, url, { push: true, silent: o.silent })) {
+    /* Bad URL: drop the tab again rather than leaving an empty ghost behind. */
+    tabs.splice(tabs.indexOf(tab), 1);
+    renderTabs();
+    return null;
+  }
   renderTabs();
   if (!o.background) activate(tab.id);
   return tab;
@@ -1559,7 +1606,10 @@ function ensureFrame(tab) {
   if (!HAS_FULLSCREEN_POLICY) f.setAttribute("allowfullscreen", "");
   f.setAttribute("referrerpolicy", "no-referrer");
   f.setAttribute("loading", "eager");
-  f.hidden = true;
+  /* Visible straight away when this is the tab on screen. A hard reload
+     replaces the element, and only activate() used to clear `hidden`, so
+     reloading the active tab left a blank stage. */
+  f.hidden = (tab.id !== activeId);
   // NOTE: no `sandbox` attribute. See the comment at the top of this script.
   frameLayer.appendChild(f);
   tab.frame = f;
@@ -1692,8 +1742,11 @@ function classifyFrame(tab, f) {
   return "opaque";
 }
 
-/* Embed memory is only ever written from evidence: a provable verdict, or the
-   user's own behaviour (they played for a while / they hit the fallback). */
+/* Embed memory is only ever written from evidence that cannot be wrong:
+     - classifyFrame() proved the outcome (same-origin, or a real body size);
+     - the user reached for the fallback  -> blocked;
+     - the user pressed "It's working"    -> ok.
+   Nothing is ever inferred from focus, timing or the frame merely existing. */
 function rememberEmbed(host, verdict) {
   if (!host || settings.embedMemory[host] === verdict) return;
   settings.embedMemory[host] = verdict;
@@ -1754,16 +1807,16 @@ function armHint(tab) {
 
 function hideHint() { hintBar.hidden = true; }
 
-/* The user is demonstrably playing, so the embed demonstrably worked. */
+/* The user has interacted with the frame, so stop offering the hint for this
+   load. Deliberately does NOT record a verdict: a frame taking focus proves
+   only that it took focus. A browser error page accepts focus in exactly the
+   same way, which is how a refused site used to get recorded as "plays here"
+   and then permanently suppress its own fallback hint. */
 function markAlive(tab) {
   if (!tab || tab.alive) return;
   tab.alive = true;
   clearTimeout(tab.hintTimer);
   hideHint();
-  clearTimeout(tab.aliveTimer);
-  tab.aliveTimer = setTimeout(function () {
-    if (!tab.closed && tab.url) rememberEmbed(hostOf(tab.url), "ok");
-  }, 10000);
 }
 
 /* Reaching for the fallback is the clearest evidence the embed failed. */
@@ -1829,6 +1882,9 @@ function activate(id) {
   const tab = getTab(id);
   if (!tab) return;
   activeId = id;
+
+  /* A deferred tab loads the moment it is first looked at. */
+  if (tab.url && !tab.frame) navigate(tab, tab.url, { trusted: true, push: false });
 
   for (let i = 0; i < tabs.length; i++) {
     const t = tabs[i];
@@ -1931,7 +1987,6 @@ function closeTab(id) {
   t.closed = true;
   clearTimeout(t.timer);
   clearTimeout(t.hintTimer);
-  clearTimeout(t.aliveTimer);
   removeShield(t);
   hideHint();
   if (t.frame) {
@@ -2046,13 +2101,16 @@ function embedBadge(game) {
 
 function cardHtml(g) {
   const hue = hueOf(g.n);
+  const fav = isFav(g.u);
   return '' +
-    '<button class="card" data-url="' + esc(g.u) + '" title="' + esc(g.u) + '">' +
-      '<span class="card-fav' + (isFav(g.u) ? " on" : "") + '" data-fav="' + esc(g.u) + '" ' +
-            'role="button" aria-label="Favourite ' + esc(g.n) + '">' +
+    '<div class="card" role="button" tabindex="0" data-url="' + esc(g.u) + '" ' +
+         'title="' + esc(g.u) + '" aria-label="Play ' + esc(g.n) + '">' +
+      '<button type="button" class="card-fav' + (fav ? " on" : "") + '" data-fav="' + esc(g.u) + '" ' +
+              'aria-pressed="' + fav + '" aria-label="' +
+              (fav ? "Remove " : "Add ") + esc(g.n) + ' to favourites">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="' + (isFav(g.u) ? "currentColor" : "none") +
         '" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><use href="#i-star"/></svg>' +
-      '</span>' +
+      '</button>' +
       '<span class="card-top">' +
         '<span class="card-mark" style="background:hsl(' + hue + ' 60% 50% / .16);color:hsl(' + hue + ' 70% 62%)">' +
           esc(g.n.charAt(0)) +
@@ -2063,9 +2121,9 @@ function cardHtml(g) {
       '<span class="card-foot">' +
         '<span class="badge">' + esc(g.c) + '</span>' +
         embedBadge(g) +
-        (g.pointer ? '<span class="badge lock" title="Needs pointer lock — Quix grants it">mouse-look</span>' : "") +
+        (g.pointer ? '<span class="badge lock" title="Mouse-look game: needs pointer lock, which these frames allow">mouse-look</span>' : "") +
       '</span>' +
-    '</button>';
+    '</div>';
 }
 
 function renderChips() {
@@ -2104,8 +2162,18 @@ function onGridClick(e) {
   if (!card) return;
   openUrl(card.dataset.url);
 }
+function onGridKey(e) {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  const card = e.target.closest(".card");
+  if (!card || e.target.closest("[data-fav]")) return;
+  e.preventDefault();
+  openUrl(card.dataset.url);
+}
+
 libGrid.addEventListener("click", onGridClick);
 favGrid.addEventListener("click", onGridClick);
+libGrid.addEventListener("keydown", onGridKey);
+favGrid.addEventListener("keydown", onGridKey);
 
 libChips.addEventListener("click", function (e) {
   const chip = e.target.closest("[data-cat]");
@@ -2233,7 +2301,8 @@ $("#btn-popout").addEventListener("click", function () {
    single load and logged an error.) */
 $("#btn-fullscreen").addEventListener("click", function () {
   const t = activeTab();
-  const target = (t && t.frame && !t.frame.hidden) ? t.frame : document.documentElement;
+  const framed = t && t.frame && !t.frame.hidden && !openPanel;
+  const target = framed ? t.frame : document.documentElement;
 
   if (document.fullscreenElement) { document.exitFullscreen(); return; }
 
@@ -2260,9 +2329,18 @@ $("#btn-theme").addEventListener("click", function () {
 /* Hint bar */
 $("#hint-dismiss").innerHTML = icon("x", 14);
 $("#hint-open").addEventListener("click", function () { fallbackToTab(activeTab()); });
+
+/* The only way an opaque frame is ever recorded as working: the user said so. */
+$("#hint-ok").addEventListener("click", function () {
+  const t = activeTab();
+  if (t && t.url) { rememberEmbed(hostOf(t.url), "ok"); t.alive = true; }
+  hideHint();
+  toast("Noted \u2014 marked as playable here.", "ok");
+});
+
 $("#hint-dismiss").addEventListener("click", function () {
   const t = activeTab();
-  if (t) t.alive = true;          /* don't nag again for this load */
+  if (t) t.alive = true;          /* stop nagging for this load, record nothing */
   hideHint();
 });
 
@@ -2386,6 +2464,8 @@ $("#btn-reset").addEventListener("click", function () {
     [
       { label: "Cancel" },
       { label: "Reset", danger: true, onClick: function () {
+          storageDisabled = true;          /* stop every writer, including beforeunload */
+          clearTimeout(saveTimer);
           try { localStorage.removeItem(STORE_KEY); } catch (e) {}
           location.reload();
         } }
@@ -2516,10 +2596,12 @@ window.addEventListener("blur", function () {
    Session
    ========================================================================== */
 function persistSession() {
-  settings.session = settings.restore
-    ? tabs.filter(function (t) { return !!t.url; })
-          .map(function (t) { return { u: t.url, a: t.id === activeId }; })
-    : [];
+  /* When restore is off we simply stop updating the stored session rather than
+     destroying it - turning the setting back on should not have cost you the
+     tabs you had open. */
+  if (!settings.restore) return;
+  settings.session = tabs.filter(function (t) { return !!t.url; })
+                         .map(function (t) { return { u: t.url, a: t.id === activeId }; });
   saveSettings();
 }
 
@@ -2530,8 +2612,8 @@ function restoreSession() {
   let wantActive = null;
   settings.session.slice(0, 12).forEach(function (s) {
     if (!s || !s.u) return;
-    const t = makeTab(s.u, { background: true, silent: true });
-    if (s.a) wantActive = t.id;
+    const t = makeTab(s.u, { background: true, defer: true, silent: true });
+    if (t && s.a) wantActive = t.id;
   });
 
   if (!tabs.length) return false;
@@ -2542,6 +2624,7 @@ function restoreSession() {
 }
 
 window.addEventListener("beforeunload", function () {
+  if (storageDisabled) return;
   persistSession();
   try { localStorage.setItem(STORE_KEY, JSON.stringify(settings)); } catch (e) {}
 });
