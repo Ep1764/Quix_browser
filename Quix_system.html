@@ -1,760 +1,2665 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <style>
-            body {
-                background: black;
-                user-select: none;
-                -moz-user-select: none;
-            }
-            .main-system {
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                position: fixed;
-                background: rgba(8, 8, 113, 0.268);
-            }
-            .main-top {
-                top: 0;
-                width: 100%;
-                padding: 5px;
-                display: flex;
-                background: rgb(78, 72, 72);
-                border-radius: 10px;
-            }
-            .main-app {
-                cursor: pointer;
-                background: white;
-                width: 100px;
-                border-radius: 5px;
-                color: black;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                margin-right: 15px;
-            }
-            .main-app:hover {
-                background: rgb(238, 237, 237);
-            }
-            .main-nav {
-                background: rgba(0, 0, 0, 0.516);
-                left: 50%;
-                transform: translate(-50%);
-                position: fixed;
-                width: auto;
-                border-radius: 5px;
-                color: white;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-            }
-            .main-settings {
-                cursor: pointer;
-                background: white;
-                width: 100px;
-                border-radius: 5px;
-                color: black;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                margin-right: 15px;
-            }
-            .main-settings:hover {
-                background: rgb(238, 237, 237);
-            }
-            #current-date {
-                margin-right: 20px;
-            }
-            #settings.active {
-                background: black;
-            }
-            .main-pop-up {
-                left: 0;
-                top: 0;
-                width: 100%;
-                display: none;
-                height: 100%;
-                background: rgb(52, 48, 48);
-            }
-            #content-main.active {
-                background: black;
-            }
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<title id="tab-title">Quix Browser</title>
+<link id="tab-icon-el" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b8cff'/%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='19' font-weight='700' fill='%23fff' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E">
+<style>
+/* ============================================================
+   Quix Browser — design tokens
+   ============================================================ */
+:root {
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px; --s7: 48px;
 
-            .pop-ups {
-                width: 100%;
-                overflow-y: scroll;
-                padding: 10px;
-                height: 90%;
-                background: rgba(0, 0, 0, 0.423);
-                border-radius: 10px;
-            }
+  --r1: 6px; --r2: 10px; --r3: 14px; --r4: 999px;
 
-            #iframe-container {
-                top: 0;
-                left: 0;
-                width: 100%;
-                display: flex;
-                height: 100%;
-            }
-            #iframe {
-                width: 100%;
-                height: 100%;
-            }
-            #search {
-                background: rgba(0, 0, 0, 0.183);
-                color: white;
-                cursor: text;
-                width: 100%;
-                border-radius: 5px;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                margin-right: 15px;
-            }
-            .pop-header {
-                width: 100%;
-                display: block;
-                background: rgba(128, 128, 128, 0.545);
-                border-radius: 10px;
-                color: white;
-                margin-bottom: 20px;
-            }
-            .pop-section {
-                width: 100%;
-                height: auto;
-                padding-top: 5px;
-                padding-bottom: 5px;
-                padding-left: 5px;
-                display: flex;
-                background: rgba(128, 128, 128, 0.455);
-                margin-bottom: 5px;
-                color: white;
-            }
-            span {
-                font-weight: bolder;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                margin-right: 10px;
-            }
-            #tab-name {
-                background: rgba(0, 0, 0, 0.183);
-                color: white;
-                cursor: text;
-                border-radius: 5px;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-            }
-            .main-backward-forward {
-                background: rgba(0, 0, 0, 0.183);
-                color: white;
-                cursor: pointer;
-                width: auto;
-                border-radius: 5px;
-                display: flex;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                margin-right: 15px;
-            }
+  --fs-xs: 11px; --fs-sm: 12.5px; --fs-md: 14px;
+  --fs-lg: 16px; --fs-xl: 20px;   --fs-2xl: 26px;
 
-            .main-forward-backward {
-                position: fixed;
-                right: 0;
-                display: flex;
-            }
-            #coord {
-                position: fixed;
-                z-index: 6;
-                width: auto;
-                height: auto;
-                padding: 5px;
-                background: white;
-            }
-            select {
-                background: rgba(0, 0, 0, 0.183);
-                color: white;
-                cursor: pointer;
-                border-radius: 5px;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                width: 100px;
-            }
-            .main-tabs {
-                cursor: pointer;
-                background: white;
-                width: 100px;
-                border-radius: 5px;
-                color: black;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                margin-right: 15px;
-            }
-            .main-tabs:hover {
-                background: rgb(238, 237, 237);
-            }
-            .tab-top {
-                top: 0;
-                width: 100%;
-                background: rgb(78, 72, 72);
-                padding: 5px;
-                display: none;
-                justify-content: center;
-                margin-bottom: 5px;
-                overflow-x: scroll;
-            }
-            #tab-containers {
-                width: auto;
-                display: flex;
-                height: auto;
-                padding: 5px;
-                background: rgba(0, 0, 0, 0.4)
-            }
-            .tab {
-                padding: 5px;
-                background: white;
-                margin: 0 5px;
-                border-radius: 10px;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                color: black;
-                cursor: pointer;
-            }
-            .tab:hover {
-                background: rgb(238, 237, 237);
-            }
-            #alert {
-                top: 10%;
-                left: 50%;
-                transform: translate(-50%);
-                position: fixed;
-                width: 500px;
-                height: 80px;
-                background: rgba(128, 128, 128, 0.601);
-                border-radius: 10px;
-                z-index: 10;
-                display: none;
-            }
-            .alert-header {
-                text-align: center;
-                margin-bottom: 10px;
-                color: red;
-                font-weight: bolder;
-            }
-            .alert-body {
-                text-align: center;
-                font-size: 15px;
-            }
-            .alert-button {
-                flex: 1;
-                display: flex;
-            }
-            .button-alert {
-                height: auto;
-                border: none;
-                margin: 0 5px;
-                width: 100%;
-                background: grey;
-                color: white;
-            }
-            .black_button {
-                cursor: pointer;
-                background: rgba(0, 0, 0, 0.183);
-                width: 100px;
-                border-radius: 5px;
-                color: white;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-            }
-            .login-system {
-                left: 0;
-                top: 0;
-                width: 100%;
-                position: fixed;
-                display: none;
-                height: 100%;
-                background: rgb(75, 72, 72)
-            }
-            .login-center {
-                top: 50%;
-                left: 50%;
-                width: 259px;
-                transform: translate(-50%, -50%);
-                padding: 10px;
-                border-radius: 8px;
-                background: rgba(0, 0, 0, 0.423);
-                position: fixed;
-                display: block;
-                justify-content: center;
-                text-align: center;
-                color: white;
-                font-weight: bolder;
-                margin-bottom: 15px;
-                margin-top: 10px;
-            }
-            .inputText {
-                background: rgba(0, 0, 0, 0.183);
-                color: white;
-                cursor: text;
-                border-radius: 5px;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-                margin-bottom: 5px;
-            }
-            .login-button {
-                width: 100%;
-                height: 30px;
-                background: rgba(49, 51, 52, 0.612);
-                color: white;
-                font-weight: bolder;
-                font-size: 15px;
-            }
-            .return-button {
-                cursor: pointer;
-                background: white;
-                width: 100px;
-                border-radius: 5px;
-                height: 20px;
-                color: black;
-                top: 5px;
-                left: 5px;
-                position: absolute;
-                text-align: center;
-                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-weight: bolder;
-            }
-            .action-button {
-                background: rgb(217, 71, 71);
-                padding: 5px;
-                margin: 0 5px;
-                color: white;
-                border: none;
-                border-radius: 10px;
-                font-weight: bolder;
-                cursor: pointer;
-            }
-            .support-image {
-                width: 50px;
-                height: 50px;
-                margin: 0 5px;
-            }
-        </style>
-        <title id="tab-title">Quix_Browser</title>
-        <link id="tabIcon" rel="icon" type="image/png" href="file:///home/chronos/u-f6a21dc75df994603a64c953a5f544df97dd0a10/MyFiles/Downloads/Screenshot%202024-01-28%205.42.32%20PM.png">
-    </head>
-    <body>
-        <div id="alert">
-            <div class="alert-header">
-                <span id="alert-type"></span>
-            </div>
-            <div class="alert-body">
-                <span id="alert-message"></span>
-            </div>
-            <div class="alert-button">
-                <button class="button-alert" onclick="understood()">Understood</button>
-                <button class="button-alert" onclick="investigate()">Investigate</button>
-            </div>
-        </div>
-        <div class="main-system">
-            
-            <div class="tab-top" id="main-tab">
-                <div id="tab-containers">
-                </div>
-            </div>
-            <div class="main-top">
-                <div class="main-nav" onclick="navSettings()">
-                    <span class="nav-info" id="current-date"></span>
-                    <span class="nav-info" id="current-time"></span>
-                </div>
-                <div class="main-settings" id="settings" onclick="openSettings()">Settings</div>
-                <div class="main-tabs" id="tabs" onclick="openTabs()">Tabs</div>
-                <div class="main-search">
-                    <input type="text" id="search" placeholder="[example] /.com/.io/.org">
-                </div>
-                <div class="main-forward-backward">
-                    <div class="main-backward-forward" onclick="page('back')"><span><</span></div>
-                    <div class="main-backward-forward" onclick="page('reload')"><span>Reload</span></div>
-                    <div class="main-backward-forward" onclick="page('forward')"><span>></span></div>
-                </div>
-            </div>
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
-            <div class="main-pop-up" id="content-main">
-                <div class="pop-ups" id="pop-time">
-                    <div class="pop-header"><h2>Adjust Time</h2></div>
-                    <div class="pop-section">
-                        <span>Include Seconds</span> <input type="checkbox" id="includeSec">
-                    </div>
-                    <div class="pop-section">
-                        <span>Include Date</span> <input type="checkbox" id="includeDate">
-                    </div>
-                    <div class="pop-header"><h2>Profile</h2></div>
-                    <div class="pop-section">
-                        <span>User: <span id="user-text" style="color: rgb(162, 157, 157);">Quix_Lume</span> </span>
-                        <span>status: <span id="status-text" style="color: rgb(151, 245, 120);">Online</span> </span>
-                        <span>Key: <span id="key-text" style="color: rgb(162, 157, 157);">Admin</span> </span>
-                        <span>FPS: <span id="fps-text" style="color: rgb(162, 157, 157);"></span></span>
-                    </div>
-                    <div class="pop-section">
-                        <span>Action: </span>
-                        <button class="action-button">Sign Out</button>
-                        <button class="action-button">Edit Profile</button>
-                    </div>
-                    <div class="pop-header"><h2>About</h2></div>
-                    <div class="pop-section">
-                        <span>Author: <span style="color: rgb(162, 157, 157);">QuixLume</span></span>
-                    </div>
-                    <div class="pop-section">
-                        <span>Description: <span style="color: rgb(162, 157, 157);">What is Quix_Browser? Quix_Browser is a "Semi-Browser" using iframe to display the searched content!, developed by a 16 year old kid (QuixLume) who grew up having to deal with blocked games on a school computer, we all have a common enemy; who is this enemy? well you might know GoGuardian, a 3rd party extension used by most school districs to prevent kids from doing anything non school related on a enterprised enrolled device.What does Quix_Browser offer? Quix_Browser offers multiple security protection; this includes the "Change Tab Title" feature that allows you to rename the tab title, with this feature a teacher might not recongnize what the tab really is meaning the teacher won't close your tab using GoGuardian!. Note that the dis-advantage of using iframe is that some websites don't allow iframe thus preventing you from accessing them; here's a few websites that don't allow iframe: <span style="color: red; font-weight: bold;">Youtube, Instagram, Facebook, Twitter, Tiktok</span>and much more, as sad as it seems Quix_Browser promises to garenteed access to blocked ".io" games!!!</span> </span>
-                    </div>
-                </div>
-                <div class="pop-ups" id="pop-settings">
-                    <div class="pop-header"><h2>Settings</h2></div>
-                    <div class="pop-section">
-                        <span>Tab Title: </span> <input type="text" class="inputText" id="tab-name" placeholder="Tab Title...">
-                    </div>
-                    <div class="pop-section">
-                        <span>Tab Icon: </span> <input type="text" class="inputText" id="tab-icon" placeholder="Tab Icon Url">
-                    </div>
-                    <div class="pop-section">
-                        <span>Color Theme: </span> <select id="colorTheme"><option id="darkTheme">Dark</option> <option id="lightTheme">Light</option></select>
-                    </div>
-                    <div class="pop-section">
-                        <span>Download Status: </span> <button class="black_button" onclick="downloadFile()">Status</button>
-                    </div>
-                    <div class="pop-section">
-                        <span>Login: </span> <button class="black_button" onclick="login()">Login</button>
-                    </div>
-                    <div class="pop-section">
-                        <span>Admin Login: </span> <button class="black_button" onclick="login2()">Login</button>
-                    </div>
-                    <div class="pop-header"><h2>Alternative Access</h2></div>
-                    <div class="pop-section">
-                        <span>File Alternative: <span style="color: rgba(162, 157, 157)">If for some reason you can't access Quix_Browser on GitHub you can still access Quix_Browser via file; download the <span style="color: lightskyblue; cursor: pointer;" onclick="downloadAlt()">file.html</span>and go to your files and open it! if you're struggling with this process you can watch a tutorial on my <span style="color: rgb(248, 76, 76); cursor: pointer;"><link href="https://youtube.com/quix_lume/">Youtube</link> </span></span></span>
-                    </div>
-                    <div class="pop-header"><h2>Support/Concerns</h2></div>
-                    <div class="pop-section">
-                        <span>Socials:</span>
-                        <img class="support-image" src="file:///media/fuse/drivefs-928cdffeb1e21c52b7a91e150400c62b/root/youtube.png">
-                        <img class="support-image" src="file:///media/fuse/drivefs-928cdffeb1e21c52b7a91e150400c62b/root/discord.png">
-                        <img class="support-image" src="file:///media/fuse/drivefs-928cdffeb1e21c52b7a91e150400c62b/root/github.png">
-                    </div>
-                    <div class="pop-section">
-                        <span>Support: <span style="color: rgb(162, 157, 157);">Please check out my <span style="color: rgb(248, 76, 76); cursor: pointer;"><link href="https://youtube.com/quix_lume/">Youtube</link> </span>, I make videos about Coding; Like And Subscribe!. Also check out my <span style="color: rgb(224, 208, 208); cursor: pointer;"><link href="https://youtube.com/quix_lume/">GitHub</link> </span>for more projects I made. Join my <span style="color: rgb(60, 102, 201); cursor: pointer;"><link href="https://youtube.com/quix_lume/">Discord Community</link> </span>where you can hang out and chat with other peoples! and discover future content from QuixLume!</span></span>
-                    </div>
-                    <div class="pop-section">
-                        <span>Concerns: <span style="color: rgb(162, 157, 157);">If for any reason you believe that your security/personal data isn't secured contact me at my discord(quix_lume) and I will convince you that Quix_Browser is 100% safe!</span></span>
-                    </div>
-                </div>
-            </div>
-            <div class="login-system" id="login">
-                <div class="return-button" onclick="goback()">Return</div>
-                <div class="login-center">
-                    <div class="login-title"><span>Login</span></div>
-                    <div class="login-inputs">
-                        <input type="text" class="inputText" id="user" placeholder="Username">
-                        <input type="text" class="inputText" id="pass" placeholder="Password">
-                        <button class="login-button" onclick="signIn()">Sign In</button>
-                    </div>
-                </div>
-            </div>
-            <div id='iframe-container'></div>
-        </div>
-        <script>
-            window.onload = function() {
-                getLiveTime();
-                currentDate();
-            }
-            alert('New update')
-            function goback() {
-                const loginPage = document.getElementById('login');
-                loginPage.style.display = 'none'
-            }
-            let username = '';
-            let password = '';
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --t-fast: 110ms var(--ease);
+  --t-med:  190ms var(--ease);
 
-            function signIn() {
-                const user = document.getElementById('user').value
-                const pass = document.getElementById('pass').value
-
-                if (user && pass) {
-                    username = user;
-                    localStorage.setItem('username', username);
-                    password = pass;
-                    localStorage.setItem('password', password);
-                    acceptLogin()
-                }
-            }
-            function acceptLogin() {
-                alarm(`Accepted Username & Password; ${localStorage.getItem('username')}; ${localStorage.getItem('password')}`)
-                goback()
-            }
-            const TabIconSearch = document.getElementById('tab-icon');
-
-
-            TabIconSearch.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    const inputValue = TabIconSearch.value;
-    
-                    const anchor = document.createElement('a');
-                    anchor.href = inputValue;
-    
-                    const faviconUrl = `https://www.google.com/s2/favicons?domain=${anchor.hostname}`;
-    
-                    const tabIcon = document.getElementById('tabIcon')
-                    tabIcon.href = faviconUrl;
-    
-                }
-            });
-            function login() {
-                const loginPage = document.getElementById('login');
-
-                if (loginPage) {
-                    if (loginPage.style.display === 'flex') {
-                        loginPage.style.display = 'none'
-                    } else {
-                        loginPage.style.display = 'flex'
-                    }
-                }
-            }
-            let user = '';
-
-            function alarm(message, duration) {
-                const text = message;
-                if (!duration) {
-                    return alert(text)
-                } else {
-                    setTimeout(() => {
-                        return alert(text)
-                    }, duration)
-                }
-            }
-            var frameCount = 0;
-            var fpsStartTime = 0;
-            var fpsDisplay = document.getElementById("fps-text");
- 
-            function updateDisplay() {
-                var currentTime = new Date().getTime();
-                var fpsElapsedTime = (currentTime - fpsStartTime) / 1000;
-                var fps = frameCount / fpsElapsedTime;
-                fpsDisplay.innerHTML = fps.toFixed(0)
-                frameCount = 0;
-                fpsStartTime = currentTime;
-            }
-            function updateFrame() {
-                frameCount++;
-                requestAnimationFrame(updateFrame);
-            }
- 
-            setInterval(updateDisplay, 1000);
-            updateFrame();
-            
-            function downloadAlt() {
-                const fileContent = '';
-                const element = document.createElement("a");
-                const file = new Blob([fileContent], {type: 'html/plain'});
-                element.href = URL.createObjectURL(file);
-                element.download = "quix_browser.html";
-                document.body.appendChild(element);
-                element.click();
-            }
-            function openTabs() {
-                addTextToContent('Called Function: openTabs()');
-                const mainTab = document.getElementById('main-tab')
-                if (mainTab) {
-                    if (mainTab.style.display === 'block') {
-                        mainTab.style.display = 'none'
-                    } else {
-                        mainTab.style.display = 'block'
-                    }
-                }
-            }
-            const Iframe = document.getElementById('iframe');
-
-            function page(action) {
-                if (action == 'reload') {
-                    window.location.reload();
-                } else if (action == 'back') {
-                    window.history.back()
-                } else if (action == 'forward') {
-                    window.history.forward();
-                } else {
-                    alarm('An Error Had Occoured!');
-                }
-            }
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'ArrowDown') {
-                    alert('Command Prompts: Active;')
-                }
-            })
-            const tabName = document.getElementById('tab-name');
-            tabName.value = localStorage.getItem('tabName', tabName.value)
-
-            document.getElementById('tab-title').innerText = localStorage.getItem('tabName', tabName.value);
-
-            tabName.addEventListener('input', function() {
-                const tabElement = document.getElementById('tab-title')
-                tabElement.innerText = tabName.value
-                localStorage.setItem('tabName', tabName.value);
-
-                if (tabName.value == '') {
-                    localStorage.setItem('tabName', 'Quix_Browser');
-                    tabElement.innerText = 'Quix_Browser'
-                }
-            })
-
-            const searchInput = document.getElementById('search');
-            searchInput.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    search();
-                }
-            });
-            document.addEventListener('keydown', function(event) {
-                const includeDate = document.getElementById('includeDate');
-                if (event.keyCode === 27) {
-                    alarm('Checkbox State: ' + includeDate.value);
-                } else if (event.key === 'F') {
-                    localStorage.clear();
-                }
-            })
-            let textContent = "";
-
-            function addTextToContent(text) {
-                textContent += text + "\n";
-            }
-
-            function downloadFile() {
-                const element = document.createElement("a");
-                const file = new Blob([textContent], {type: 'text/plain'});
-                element.href = URL.createObjectURL(file);
-                element.download = "text_file.txt";
-                document.body.appendChild(element);
-                element.click();
-            }
-            const docElement = document.documentElement;
-
-if (docElement.requestFullscreen) {
-  docElement.requestFullscreen();
-} else if (docElement.mozRequestFullScreen) { // Firefox
-  docElement.mozRequestFullScreen();
-} else if (docElement.webkitRequestFullscreen) { // Chrome, Safari, and Opera
-  docElement.webkitRequestFullscreen();
-} else if (docElement.msRequestFullscreen) { // IE/Edge
-  docElement.msRequestFullscreen();
+  --chrome-h: 52px;
+  --tabstrip-h: 40px;
 }
-            const iframes = [];
 
-            function search() {
-                const url = searchInput.value;
-                addTextToContent('Called Function: search(): ' + url);
-                const urlPrefix = 'https://' + url;
+/* Dark theme (default) */
+:root, :root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:            #0b0e14;
+  --surface:       #141821;
+  --surface-2:     #1b2130;
+  --surface-3:     #232a3b;
+  --border:        #2a3140;
+  --border-strong: #3b4457;
+  --text:          #e7ebf2;
+  --text-dim:      #98a2b6;
+  --text-faint:    #69738a;
+  --accent:        #5b8cff;
+  --accent-hi:     #82a6ff;
+  --accent-soft:   rgba(91,140,255,.15);
+  --danger:        #ff6b6b;
+  --danger-soft:   rgba(255,107,107,.14);
+  --success:       #43d18a;
+  --warn:          #ffb454;
+  --sh1: 0 1px 2px rgba(0,0,0,.4);
+  --sh2: 0 6px 20px rgba(0,0,0,.45);
+  --sh3: 0 18px 50px rgba(0,0,0,.55);
+  --scrim: rgba(4,6,10,.7);
+}
 
-                const iframe = document.createElement('iframe');
-                iframe.id = 'iframe'
-                iframe.src = urlPrefix;
-                iframe.setAttribute('allowfullscreen', '');
-                iframe.style.display = 'none';
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:            #eef1f7;
+  --surface:       #ffffff;
+  --surface-2:     #f2f5fa;
+  --surface-3:     #e4e9f2;
+  --border:        #d9dfea;
+  --border-strong: #bcc5d6;
+  --text:          #131822;
+  --text-dim:      #545e75;
+  --text-faint:    #838da4;
+  --accent:        #2f68f0;
+  --accent-hi:     #1d51d1;
+  --accent-soft:   rgba(47,104,240,.12);
+  --danger:        #d93a3a;
+  --danger-soft:   rgba(217,58,58,.1);
+  --success:       #1a9a5f;
+  --warn:          #b8720a;
+  --sh1: 0 1px 2px rgba(20,30,50,.09);
+  --sh2: 0 6px 20px rgba(20,30,50,.12);
+  --sh3: 0 18px 50px rgba(20,30,50,.18);
+  --scrim: rgba(20,28,44,.42);
+}
 
-                iframes.push(iframe);
-                addTextToContent(`Array Pushed: ${iframe.src}`);
+/* ============================================================
+   Reset / base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
 
-                const iframecontainer = document.getElementById("iframe-container");
-                iframecontainer.append(iframe)
+html, body {
+  height: 100%;
+  margin: 0;
+  overscroll-behavior: none;
+}
 
-                addTab(iframes.length - 1);
-            }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 400 var(--fs-md)/1.5 var(--font);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 
-            function addTab(index) {
-                addTextToContent(`Called Function: addTab(${index})`);
-                const title = iframes[index].src;
-                const tabClass = document.createElement('div');
-                tabClass.className = 'tab';
-                tabClass.innerText = title.toString().slice(8)
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; padding: 0; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3, p { margin: 0; }
+svg { display: block; flex: none; }
 
-                tabClass.addEventListener('click', function() {
-                    showIframe(index);
-                });
-                tabClass.addEventListener('dblclick', function() {
-                    deleteTab(index);
-                });
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r1);
+}
 
-                const tabContainer = document.getElementById('tab-containers');
-                tabContainer.appendChild(tabClass);
-            }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 2px solid var(--bg);
+  border-radius: var(--r4);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
 
-            function showIframe(index) {
-                addTextToContent(`Called Function: showIframe(${index})`);
-                iframes.forEach(function(iframe) {
-                    iframe.style.display = 'none';
-                });
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
 
-                iframes[index].style.display = 'block';
-            }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 
-            function deleteTab(index) {
-                addTextToContent(`Called Function: deleteTab(${index})`);
-                const tabContainer = document.getElementById('tab-containers');
-                tabContainer.removeChild(tabContainer.childNodes[index]);
+/* ============================================================
+   App shell
+   ============================================================ */
+.app {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  height: 100vh;          /* fallback first... */
+  height: 100dvh;         /* ...so dvh wins where supported (mobile URL bar) */
+}
 
-                const iframe = iframes.splice(index, 1)[0];
-                iframe.parentNode.removeChild(iframe);
-            }
+/* ---------- chrome bar ---------- */
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: var(--chrome-h);
+  padding: var(--s2) var(--s3);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--sh1);
+  position: relative;
+  z-index: 30;
+}
 
-            function getLiveTime() {
-                const date = new Date();
-                const utcOffset = -7 * 60;
-                const localOffset = date.getTimezoneOffset();
+.nav-group { display: flex; align-items: center; gap: var(--s1); flex: none; }
 
-                const gmtMinus7Time = new Date(date.getTime() + (localOffset + utcOffset) * 60000);
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: var(--r2);
+  color: var(--text-dim);
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.icon-btn:hover:not(:disabled) { background: var(--surface-3); color: var(--text); }
+.icon-btn:active:not(:disabled) { transform: scale(.93); }
+.icon-btn:disabled { opacity: .45; cursor: default; }
+.icon-btn.is-on { background: var(--accent-soft); color: var(--accent); }
 
-                let hours = gmtMinus7Time.getHours();
-                const minutes = gmtMinus7Time.getMinutes();
-                const seconds = gmtMinus7Time.getSeconds();
+/* ---------- omnibox ---------- */
+.omnibox {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  height: 36px;
+  padding: 0 var(--s2) 0 var(--s3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+.omnibox:focus-within {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.omnibox > svg { color: var(--text-faint); }
+.omnibox input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  background: none;
+  font-size: var(--fs-md);
+}
+.omnibox input::placeholder { color: var(--text-faint); }
+.omnibox .go {
+  flex: none;
+  height: 26px;
+  padding: 0 var(--s3);
+  border-radius: var(--r4);
+  background: var(--accent);
+  color: #fff;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition: background var(--t-fast);
+}
+.omnibox .go:hover { background: var(--accent-hi); }
 
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours %= 12;
-                hours = hours || 12;
+/* ---------- clock ---------- */
+.clock {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  padding: 0 var(--s2);
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.clock .date { color: var(--text-faint); }
+.clock:empty { display: none; }
 
-                const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-                const includeSec = document.getElementById("includeSec")
-                const timeElement = document.getElementById('current-time');
-                timeElement.innerText = `${hours}:${formattedMinutes}.${seconds} ${ampm}`;
-           }
+@media (max-width: 900px) { .clock { display: none; } }
+@media (max-width: 620px) {
+  .chrome { flex-wrap: wrap; }
+  .omnibox { order: 3; flex-basis: 100%; }
+}
 
-           setInterval(getLiveTime, 100);
+/* ---------- tab strip ---------- */
+.tabstrip {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: var(--tabstrip-h);
+  padding: 0 var(--s3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  z-index: 20;
+}
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  padding: var(--s1) 0;
+}
+.tabs::-webkit-scrollbar { display: none; }
 
-           function currentDate() {
-               addTextToContent('Called Function: currentDate()');
-               const month = new Date().getMonth() + 1;
-               const day = new Date().getDate();
-               const year = new Date().getFullYear().toString().slice(-2);
+.tab {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex: 0 1 190px;
+  min-width: 76px;
+  max-width: 190px;
+  overflow: hidden;
+  height: 30px;
+  padding: 0 var(--s1) 0 var(--s3);
+  border-radius: var(--r2);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.tab:hover { background: var(--surface-3); color: var(--text); }
+.tab[aria-selected="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--sh1);
+  font-weight: 600;
+}
+.tab .favicon {
+  width: 15px; height: 15px;
+  flex: none;
+  border-radius: 3px;
+  object-fit: contain;
+}
+.tab .label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tab .close {
+  display: grid;
+  place-items: center;
+  width: 20px; height: 20px;
+  flex: none;
+  border-radius: var(--r1);
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity var(--t-fast), background var(--t-fast), color var(--t-fast);
+}
+.tab:hover .close,
+.tab[aria-selected="true"] .close { opacity: 1; }
+.tab .close:hover { background: var(--danger-soft); color: var(--danger); }
 
-               const dateElement = document.getElementById('current-date');
+.tab .spinner {
+  width: 13px; height: 13px;
+  flex: none;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-               if (includeDate.checked == true) {
-                dateElement.innerText = `${month}/${day}/${year}`;
-               } else if (includeDate.checked == false) {
-                dateElement.innerText = '';
-               }
-            };
-            setInterval(currentDate, 100);
+/* ---------- stage ---------- */
+.stage {
+  position: relative;
+  min-height: 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.frame-layer { position: absolute; inset: 0; }
+.frame-layer iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--bg);
+  display: block;
+}
+.frame-layer iframe[hidden] { display: none !important; }
 
-            function openSettings() {
-                addTextToContent('Called Function: openSettings()');
-                const mainPop = document.getElementById('content-main');
-                if (mainPop) {
-                    if (mainPop.style.display === 'flex') {
-                        mainPop.style.display = 'none'
-                    } else {
-                        mainPop.style.display = 'flex'
-                    }
-                }
-            }
+/* click-to-focus shield: gives keyboard control to the game */
+.focus-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  background: var(--scrim);
+  cursor: pointer;
+  animation: fade var(--t-med);
+}
+@keyframes fade { from { opacity: 0; } }
+.focus-shield .pill {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3) var(--s5);
+  border-radius: var(--r4);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--sh3);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--text);
+}
 
-        </script>
-    </body>
+/* ---------- panels (home / library / settings) ---------- */
+.panel {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  padding: var(--s6) var(--s5) var(--s7);
+}
+.panel[hidden] { display: none !important; }
+.panel-inner { max-width: 1180px; margin: 0 auto; }
+
+.panel-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  margin-bottom: var(--s5);
+}
+.panel-head h2 {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+.panel-head p {
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  margin-top: var(--s1);
+  max-width: 62ch;
+}
+
+.section {
+  margin-bottom: var(--s6);
+}
+.section > h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: var(--s3);
+}
+
+/* ---------- game library ---------- */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  margin-bottom: var(--s5);
+}
+.chip {
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r4);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: all var(--t-fast);
+}
+.chip:hover { border-color: var(--border-strong); color: var(--text); }
+.chip[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.lib-search {
+  flex: 1 1 220px;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  height: 34px;
+  padding: 0 var(--s3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+}
+.lib-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.lib-search svg { color: var(--text-faint); }
+.lib-search input { flex: 1; min-width: 0; border: none; background: none; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--s3);
+}
+
+.card {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding: var(--s4);
+  min-height: 116px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--sh2);
+}
+.card:active { transform: translateY(0); }
+
+.card-top { display: flex; align-items: center; gap: var(--s3); }
+.card-mark {
+  display: grid;
+  place-items: center;
+  width: 38px; height: 38px;
+  flex: none;
+  border-radius: var(--r2);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.card-name {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  min-width: 0;
+  padding-right: var(--s5);   /* clear of the favourite star */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-desc {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s1) var(--s2);
+  margin-top: auto;
+  padding-top: var(--s1);
+}
+
+.badge {
+  padding: 2px var(--s2);
+  border-radius: var(--r1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: .02em;
+  white-space: nowrap;      /* never break a label across two lines */
+  background: var(--surface-3);
+  color: var(--text-dim);
+}
+.badge.ok    { background: rgba(67,209,138,.14); color: var(--success); }
+.badge.bad   { background: var(--danger-soft);   color: var(--danger); }
+.badge.lock  { background: rgba(255,180,84,.14); color: var(--warn); }
+
+.card-fav {
+  position: absolute;
+  top: var(--s2); right: var(--s2);
+  width: 26px; height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r1);
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity var(--t-fast), color var(--t-fast), background var(--t-fast);
+}
+.card:hover .card-fav, .card-fav.on { opacity: 1; }
+.card-fav:hover { background: var(--surface-3); color: var(--warn); }
+.card-fav.on { color: var(--warn); }
+
+/* ---------- settings ---------- */
+.rows {
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  background: var(--surface);
+  overflow: hidden;
+}
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s4);
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--border);
+}
+.row-text { flex: 1 1 260px; }
+.row:last-child { border-bottom: none; }
+.row-text { min-width: 0; }
+.row-text b { display: block; font-size: var(--fs-md); font-weight: 600; }
+.row-text small {
+  display: block;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  margin-top: 2px;
+}
+.row-ctl { flex: none; display: flex; align-items: center; gap: var(--s2); }
+
+.field {
+  height: 32px;
+  min-width: 0;
+  width: 180px;
+  max-width: 100%;
+  padding: 0 var(--s3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+select.field { cursor: pointer; padding-right: var(--s2); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  height: 32px;
+  padding: 0 var(--s4);
+  border-radius: var(--r2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition: all var(--t-fast);
+}
+.btn:hover { background: var(--surface-3); border-color: var(--border-strong); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-hi); border-color: var(--accent-hi); }
+.btn.danger { color: var(--danger); border-color: var(--border); }
+.btn.danger:hover { background: var(--danger-soft); border-color: var(--danger); }
+
+/* toggle switch */
+.switch {
+  position: relative;
+  width: 40px; height: 23px;
+  flex: none;
+  border-radius: var(--r4);
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 17px; height: 17px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: transform var(--t-med), background var(--t-fast);
+}
+.switch[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
+.switch[aria-checked="true"]::after { transform: translateX(17px); background: #fff; }
+
+/* ---------- notice / info blocks ---------- */
+.notice {
+  display: flex;
+  gap: var(--s3);
+  padding: var(--s4);
+  border-radius: var(--r3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.notice.warn { border-left-color: var(--warn); }
+.notice svg { color: var(--accent); margin-top: 2px; }
+.notice.warn svg { color: var(--warn); }
+.notice b { color: var(--text); }
+.notice code {
+  font-family: var(--mono);
+  font-size: .92em;
+  padding: 1px 5px;
+  border-radius: var(--r1);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+/* ---------- empty / blocked state ---------- */
+.state {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  padding: var(--s5);
+  background: var(--bg);
+  text-align: center;
+}
+.state[hidden] { display: none !important; }
+.state-box { max-width: 560px; display: grid; gap: var(--s4); justify-items: center; }
+.state-icon {
+  display: grid;
+  place-items: center;
+  width: 60px; height: 60px;
+  border-radius: var(--r3);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.state h3 { font-size: var(--fs-xl); font-weight: 700; }
+.state p { color: var(--text-dim); font-size: var(--fs-sm); line-height: 1.65; }
+.state .actions { display: flex; gap: var(--s2); flex-wrap: wrap; justify-content: center; }
+
+/* ---------- embed hint bar ---------- */
+.hint-bar {
+  position: absolute;
+  left: 50%;
+  bottom: var(--s4);
+  transform: translateX(-50%);
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  max-width: min(680px, calc(100% - var(--s5)));
+  padding: var(--s3) var(--s3) var(--s3) var(--s4);
+  border-radius: var(--r4);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--sh3);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  animation: toast-in 240ms var(--ease);
+}
+.hint-bar[hidden] { display: none !important; }
+.hint-bar b { color: var(--text); }
+.hint-bar .grow { flex: 1 1 auto; line-height: 1.45; }
+.hint-bar .btn { flex: none; }
+@media (max-width: 560px) {
+  .hint-bar { flex-wrap: wrap; bottom: var(--s2); }
+}
+
+/* ---------- toasts ---------- */
+.toasts {
+  position: fixed;
+  bottom: var(--s5);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 80;            /* below the modal scrim (90), not above it */
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  align-items: center;
+  pointer-events: none;
+  width: min(440px, calc(100vw - var(--s5)));
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  width: 100%;
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r2);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--sh3);
+  font-size: var(--fs-sm);
+  color: var(--text);
+  pointer-events: auto;
+  animation: toast-in 220ms var(--ease);
+}
+.toast.out { animation: toast-out 180ms var(--ease) forwards; }
+.toast svg { flex: none; }
+.toast.info svg  { color: var(--accent); }
+.toast.ok svg    { color: var(--success); }
+.toast.warn svg  { color: var(--warn); }
+.toast.error svg { color: var(--danger); }
+.toast span { flex: 1; line-height: 1.45; }
+@keyframes toast-in  { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+@keyframes toast-out { to   { opacity: 0; transform: translateY(6px)  scale(.98); } }
+
+/* ---------- modal ---------- */
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: var(--s5);
+  background: var(--scrim);
+  animation: fade var(--t-med);
+}
+.modal-scrim[hidden] { display: none !important; }
+.modal {
+  width: min(520px, 100%);
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: var(--s5);
+  border-radius: var(--r3);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--sh3);
+  animation: pop 200ms var(--ease);
+}
+@keyframes pop { from { opacity: 0; transform: scale(.96) translateY(8px); } }
+.modal h3 { font-size: var(--fs-xl); font-weight: 700; margin-bottom: var(--s3); }
+.modal .body { color: var(--text-dim); font-size: var(--fs-sm); line-height: 1.65; }
+.modal .foot { display: flex; justify-content: flex-end; gap: var(--s2); margin-top: var(--s5); }
+
+kbd {
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: var(--r1);
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  font: 600 var(--fs-xs)/1.6 var(--mono);
+  color: var(--text);
+  text-align: center;
+}
+
+.shortcut-list { display: grid; gap: var(--s2); margin-top: var(--s4); }
+.shortcut-list div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s4);
+  font-size: var(--fs-sm);
+}
+</style>
+</head>
+<body>
+
+<svg class="sr-only" aria-hidden="true" focusable="false"><defs>
+  <g id="i-back"><path d="M19 12H5M12 19l-7-7 7-7"/></g>
+  <g id="i-fwd"><path d="M5 12h14M12 5l7 7-7 7"/></g>
+  <g id="i-reload"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></g>
+  <g id="i-home"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></g>
+  <g id="i-plus"><path d="M12 5v14M5 12h14"/></g>
+  <g id="i-x"><path d="M18 6 6 18M6 6l12 12"/></g>
+  <g id="i-cog"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></g>
+  <g id="i-full"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"/></g>
+  <g id="i-ext"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></g>
+  <g id="i-search"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g>
+  <g id="i-grid"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>
+  <g id="i-star"><path d="m12 3 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.9l1.1-6.5L2.6 9.8l6.5-.9z"/></g>
+  <g id="i-info"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></g>
+  <g id="i-warn"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></g>
+  <g id="i-ok"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></g>
+  <g id="i-err"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></g>
+  <g id="i-sun"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g>
+  <g id="i-moon"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8z"/></g>
+  <g id="i-cursor"><path d="m4 3 7.5 17.5 2.4-6.6 6.6-2.4z"/></g>
+  <g id="i-block"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></g>
+</defs></svg>
+
+<div class="app">
+
+  <!-- ============ chrome bar ============ -->
+  <header class="chrome">
+    <div class="nav-group">
+      <button class="icon-btn" id="btn-back" title="Back (Alt+←)" aria-label="Back" disabled>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-back"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-fwd" title="Forward (Alt+→)" aria-label="Forward" disabled>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-fwd"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-reload" title="Reload this tab (Ctrl+R)" aria-label="Reload">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-reload"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-home" title="Game library (Ctrl+Shift+H)" aria-label="Game library">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>
+      </button>
+    </div>
+
+    <form class="omnibox" id="omnibox-form" role="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-search"/></svg>
+      <input type="text" id="omnibox" placeholder="Type a site or search  —  e.g. slither.io" autocomplete="off" spellcheck="false" aria-label="Address bar">
+      <button class="go" type="submit">Go</button>
+    </form>
+
+    <div class="clock" id="clock" aria-live="off">
+      <span class="date" id="clock-date"></span>
+      <span class="time" id="clock-time"></span>
+    </div>
+
+    <div class="nav-group">
+      <button class="icon-btn" id="btn-fullscreen" title="Fullscreen the game (F11 alternative)" aria-label="Fullscreen">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-full"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-popout" title="Open current page in a real browser tab" aria-label="Open in new tab">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-ext"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-theme" title="Toggle theme" aria-label="Toggle theme">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-moon" id="theme-icon"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-settings" title="Settings (Ctrl+,)" aria-label="Settings">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cog"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ tab strip ============ -->
+  <nav class="tabstrip">
+    <div class="tabs" id="tabs" role="tablist" aria-label="Open tabs"></div>
+    <button class="icon-btn" id="btn-newtab" title="New tab (Ctrl+T)" aria-label="New tab">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plus"/></svg>
+    </button>
+  </nav>
+
+  <!-- ============ stage ============ -->
+  <main class="stage" id="stage">
+    <div class="frame-layer" id="frame-layer"></div>
+
+    <!-- soft hint: shown when we genuinely cannot tell whether the embed worked -->
+    <div class="hint-bar" id="embed-hint" hidden>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--warn)"><use href="#i-warn"/></svg>
+      <span class="grow">Still blank? <b id="hint-host"></b> may not allow embedding. A browser never tells a page which it is &mdash; but opening it directly always works.</span>
+      <button class="btn primary" id="hint-open">Open in a real tab</button>
+      <button class="btn" id="hint-ok">It&rsquo;s working</button>
+      <button class="icon-btn" id="hint-dismiss" aria-label="Dismiss" style="width:28px;height:28px"></button>
+    </div>
+
+    <!-- blocked / error state -->
+    <div class="state" id="state-blocked" hidden>
+      <div class="state-box">
+        <div class="state-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-block"/></svg>
+        </div>
+        <h3 id="blocked-title">This site refused to be embedded</h3>
+        <p id="blocked-msg"></p>
+        <div class="actions">
+          <button class="btn primary" id="blocked-open">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-ext"/></svg>
+            Open in a real tab
+          </button>
+          <button class="btn" id="blocked-retry">Try again</button>
+          <button class="btn" id="blocked-lib">Back to library</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ library panel ============ -->
+    <section class="panel" id="panel-library" aria-label="Game library">
+      <div class="panel-inner">
+        <div class="panel-head">
+          <div>
+            <h2>Game Library</h2>
+            <p>Click a game to load it in a tab. Every frame gets the permissions a game actually needs &mdash; pointer lock, fullscreen, gamepad &mdash; plus the keyboard focus most embeds forget. Badges record what happened on this device; they are never a guess.</p>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <label class="lib-search">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-search"/></svg>
+            <input type="text" id="lib-search" placeholder="Filter games…" autocomplete="off" aria-label="Filter games">
+          </label>
+          <div id="lib-chips" style="display:flex;gap:var(--s2);flex-wrap:wrap"></div>
+        </div>
+
+        <div class="section" id="fav-section" hidden>
+          <h3>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><use href="#i-star"/></svg>
+            Favourites
+          </h3>
+          <div class="grid" id="fav-grid"></div>
+        </div>
+
+        <div class="section">
+          <h3>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><use href="#i-grid"/></svg>
+            <span id="lib-count"></span>
+          </h3>
+          <div class="grid" id="lib-grid"></div>
+        </div>
+
+        <div class="notice warn" style="margin-top:var(--s5)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-warn"/></svg>
+          <div>
+            <b>Why some games say “can’t embed”.</b> A site can send an <code>X-Frame-Options</code> or
+            <code>Content-Security-Policy: frame-ancestors</code> header telling the browser to refuse being put in a
+            frame. That refusal is enforced by the browser itself, before any of this page’s JavaScript runs — so no
+            amount of code here can override it, and the browser never reports back which sites did it. That is why a
+            badge stays <b>untried</b> until you actually play: Quix reports what happened rather than guessing.
+            For sites that refuse, <b>Open in a real tab</b> is one click and always works.
+            <a href="#" id="why-more">Read the full explanation →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ settings panel ============ -->
+    <section class="panel" id="panel-settings" aria-label="Settings" hidden>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <div>
+            <h2>Settings</h2>
+            <p>Settings live only in this browser’s <code>localStorage</code> — there is no server and no account. The one exception is called out on the Tab icon row below.</p>
+          </div>
+          <button class="btn" id="btn-close-settings">Done</button>
+        </div>
+
+        <div class="section">
+          <h3>Appearance</h3>
+          <div class="rows">
+            <div class="row">
+              <div class="row-text"><b>Theme</b><small>Follows your system setting until you pick one.</small></div>
+              <div class="row-ctl">
+                <select class="field" id="set-theme" style="min-width:130px">
+                  <option value="system">System</option>
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="row-text"><b>Show clock</b><small>A small clock in the toolbar.</small></div>
+              <div class="row-ctl"><button class="switch" id="set-clock" role="switch" aria-checked="true" aria-label="Show clock"></button></div>
+            </div>
+            <div class="row">
+              <div class="row-text"><b>Show date</b><small>Adds the date next to the clock.</small></div>
+              <div class="row-ctl"><button class="switch" id="set-date" role="switch" aria-checked="false" aria-label="Show date"></button></div>
+            </div>
+            <div class="row">
+              <div class="row-text"><b>Use 24-hour time</b><small>13:05 instead of 1:05 PM.</small></div>
+              <div class="row-ctl"><button class="switch" id="set-24h" role="switch" aria-checked="false" aria-label="24-hour time"></button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Page identity</h3>
+          <div class="rows">
+            <div class="row">
+              <div class="row-text"><b>Tab title</b><small>What this page calls itself in the browser tab. Leave blank to reset.</small></div>
+              <div class="row-ctl"><input type="text" class="field" id="set-title" placeholder="Quix Browser" maxlength="120"></div>
+            </div>
+            <div class="row">
+              <div class="row-text"><b>Tab icon</b><small>Paste any site (e.g. <code>google.com</code>) to borrow its favicon. This is the one feature that leaves your browser — the domain you type is sent to Google’s favicon service to fetch the image. Leave it blank to keep the built-in icon and make no request at all.</small></div>
+              <div class="row-ctl"><input type="text" class="field" id="set-icon" placeholder="example.com" autocomplete="off"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Game playback</h3>
+          <div class="rows">
+            <div class="row">
+              <div class="row-text">
+                <b>Click-to-play focus shield</b>
+                <small>Shows a “click to play” overlay on a freshly loaded game and hands keyboard control to it. Fixes games where WASD does nothing.</small>
+              </div>
+              <div class="row-ctl"><button class="switch" id="set-shield" role="switch" aria-checked="true" aria-label="Focus shield"></button></div>
+            </div>
+            <div class="row">
+              <div class="row-text">
+                <b>Allow microphone in games</b>
+                <small>Only needed for games with voice chat. Off by default — the game still has to ask you for permission.</small>
+              </div>
+              <div class="row-ctl"><button class="switch" id="set-mic" role="switch" aria-checked="false" aria-label="Allow microphone"></button></div>
+            </div>
+            <div class="row">
+              <div class="row-text">
+                <b>Freeze background tabs</b>
+                <small>Hides inactive game frames from rendering so the game you’re playing gets the whole GPU. Recommended on Chromebooks.</small>
+              </div>
+              <div class="row-ctl"><button class="switch" id="set-freeze" role="switch" aria-checked="true" aria-label="Freeze background tabs"></button></div>
+            </div>
+            <div class="row">
+              <div class="row-text">
+                <b>Embed timeout</b>
+                <small>How long to wait before calling a frame dead and offering the fallback.</small>
+              </div>
+              <div class="row-ctl">
+                <select class="field" id="set-timeout" style="min-width:120px">
+                  <option value="8000">8 seconds</option>
+                  <option value="15000" selected>15 seconds</option>
+                  <option value="30000">30 seconds</option>
+                  <option value="0">Never</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Session</h3>
+          <div class="rows">
+            <div class="row">
+              <div class="row-text"><b>Restore tabs on reload</b><small>Reopens whatever you had open last time.</small></div>
+              <div class="row-ctl"><button class="switch" id="set-restore" role="switch" aria-checked="true" aria-label="Restore tabs"></button></div>
+            </div>
+            <div class="row">
+              <div class="row-text"><b>Diagnostics log</b><small>A plain-text log of what this page did. Useful when a game won’t load.</small></div>
+              <div class="row-ctl">
+                <button class="btn" id="btn-log-view">View</button>
+                <button class="btn" id="btn-log-save">Download</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="row-text"><b>Reset everything</b><small>Clears settings, favourites, embed history and open tabs.</small></div>
+              <div class="row-ctl"><button class="btn danger" id="btn-reset">Reset</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Keyboard</h3>
+          <div class="notice">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-info"/></svg>
+            <div>
+              <b>Shortcuts never steal a game’s keys.</b> Every shortcut below needs <kbd>Ctrl</kbd> or <kbd>Alt</kbd>,
+              and all of them are ignored while a game frame has focus — so <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>,
+              arrows, <kbd>Space</kbd> and <kbd>F</kbd> always reach the game. Once a game holds focus its keystrokes go
+              straight to it and never reach this page at all, so click the toolbar to come back.
+              <div class="shortcut-list">
+                <div><span>New tab</span><span><kbd>Ctrl</kbd> <kbd>T</kbd></span></div>
+                <div><span>Close tab</span><span><kbd>Ctrl</kbd> <kbd>W</kbd></span></div>
+                <div><span>Next / previous tab</span><span><kbd>Ctrl</kbd> <kbd>Tab</kbd></span></div>
+                <div><span>Focus address bar</span><span><kbd>Ctrl</kbd> <kbd>L</kbd></span></div>
+                <div><span>Reload tab</span><span><kbd>Ctrl</kbd> <kbd>R</kbd></span></div>
+                <div><span>Back / forward</span><span><kbd>Alt</kbd> <kbd>←</kbd> <kbd>→</kbd></span></div>
+                <div><span>Game library</span><span><kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>H</kbd></span></div>
+                <div><span>Settings</span><span><kbd>Ctrl</kbd> <kbd>,</kbd></span></div>
+                <div><span>Release the mouse from a game <em>(browser-handled)</em></span><span><kbd>Esc</kbd></span></div>
+                <div><span>Return to Quix from a game</span><span>click the toolbar</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>About</h3>
+          <div class="notice">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-info"/></svg>
+            <div>
+              <b>Quix Browser</b> is a single static HTML page that loads other sites in an
+              <code>&lt;iframe&gt;</code> and gives those frames the permissions a browser game actually needs —
+              pointer lock, fullscreen, gamepad and keyboard focus. It has no server and no backend; it can only
+              show you sites your browser was already able to reach.
+              <br><br>
+              <a href="#" id="about-limits">What this page can and cannot do →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<div class="modal-scrim" id="modal-scrim" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h3 id="modal-title"></h3>
+    <div class="body" id="modal-body"></div>
+    <div class="foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ==========================================================================
+   Quix Browser
+   A single static page that embeds other sites in <iframe> and gives those
+   frames the permissions a browser game actually needs.
+
+   Read this before changing the embedding code:
+   A site can refuse to be framed with `X-Frame-Options` or with
+   `Content-Security-Policy: frame-ancestors`. That refusal is enforced by the
+   browser's network stack before any script on this page runs. There is no
+   attribute, no sandbox flag and no JavaScript trick that overrides it from a
+   static page. What this file CAN do — and what the old version got wrong — is
+   make sure every site that *does* allow framing is actually playable.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ *
+ * Frame permissions
+ *
+ * `allow` is a Permissions Policy. Anything omitted here is DENIED to the
+ * frame, which is why games silently misbehave in naive embeds:
+ *   pointer-lock  -> mouse-look shooters can't capture the cursor
+ *   fullscreen    -> the game's own fullscreen button does nothing
+ *   gamepad       -> controllers are invisible to the game
+ *   autoplay      -> audio/video intros stall
+ * Camera and microphone are deliberately NOT in the base list; the mic is
+ * opt-in via settings, and the browser still prompts before granting it.
+ * ------------------------------------------------------------------ */
+const BASE_ALLOW = [
+  "accelerometer", "autoplay", "clipboard-write", "encrypted-media",
+  "fullscreen", "gamepad", "gyroscope", "magnetometer", "midi",
+  "picture-in-picture", "pointer-lock", "screen-wake-lock", "web-share",
+  "xr-spatial-tracking"
+];
+
+/* No `sandbox` attribute is set on game frames, and that is the single most
+   important decision in this file.
+
+   A cross-origin frame is already isolated by the same-origin policy, so
+   `sandbox` can only take capabilities away. Measured in Chromium, calling
+   requestPointerLock() inside a frame gives:
+
+       no sandbox attribute            -> NotAllowedError  (needs a user gesture,
+                                                            i.e. it is permitted)
+       sandbox="allow-scripts"         -> SecurityError    (forbidden outright)
+
+   That difference is every mouse-look shooter - Krunker, Shell Shockers,
+   Venge, 1v1.LOL - working versus being permanently unplayable. The two tokens
+   you would have to add back for a game to function at all (allow-scripts +
+   allow-same-origin) cancel out the security benefit anyway, so sandboxing here
+   costs real functionality and buys nothing. */
+
+const STORE_KEY = "quix.v2";
+const LOG_MAX   = 600;
+
+/* ------------------------------------------------------------------ *
+ * Game catalogue
+ *
+ * `embed` is deliberately NOT hardcoded. Whether a site allows framing is a
+ * response header that changes without notice, and a stale "works!" label is
+ * worse than no label. Quix probes each site the first time you open it and
+ * remembers the real answer per browser. `pointer: true` marks mouse-look
+ * games, which are unplayable without allow="pointer-lock".
+ * ------------------------------------------------------------------ */
+const GAMES = [
+  { n: "Slither.io",     u: "https://slither.io",            c: "Growth",   d: "Grow the longest snake without touching another player." },
+  { n: "Agar.io",        u: "https://agar.io",               c: "Growth",   d: "Eat cells smaller than you, dodge the bigger ones." },
+  { n: "Diep.io",        u: "https://diep.io",               c: "Shooter",  d: "Upgrade a tank, farm shapes, out-build the lobby." },
+  { n: "Krunker.io",     u: "https://krunker.io",            c: "Shooter",  d: "Fast browser FPS with class loadouts.", pointer: true },
+  { n: "Shell Shockers", u: "https://shellshock.io",         c: "Shooter",  d: "Multiplayer FPS where everyone is an egg.", pointer: true },
+  { n: "Venge.io",       u: "https://venge.io",              c: "Shooter",  d: "Arena FPS with movement tech.", pointer: true },
+  { n: "MooMoo.io",      u: "https://moomoo.io",             c: "Survival", d: "Gather resources, build a base, defend it." },
+  { n: "Starve.io",      u: "https://starve.io",             c: "Survival", d: "Survive the cold, craft tools, don't starve." },
+  { n: "Taming.io",      u: "https://taming.io",             c: "Survival", d: "Tame pets, build, and fight other players." },
+  { n: "Zombs.io",       u: "https://zombs.io",              c: "Survival", d: "Tower-defence base building against zombie waves." },
+  { n: "Skribbl.io",     u: "https://skribbl.io",            c: "Party",    d: "Draw the word, guess everyone else's." },
+  { n: "Gartic.io",      u: "https://gartic.io",             c: "Party",    d: "Drawing and guessing with a bigger word pool." },
+  { n: "Bonk.io",        u: "https://bonk.io",               c: "Party",    d: "Physics platform brawler, knock everyone off." },
+  { n: "Paper.io 2",     u: "https://paper-io.com",          c: "Arcade",   d: "Claim territory without getting your trail cut." },
+  { n: "Hole.io",        u: "https://hole-io.com",           c: "Arcade",   d: "Be a black hole, swallow an entire city." },
+  { n: "Wings.io",       u: "https://wings.io",              c: "Arcade",   d: "Top-down plane dogfighting." },
+  { n: "Deeeep.io",      u: "https://deeeep.io",             c: "Growth",   d: "Ocean food chain — evolve from shrimp to whale." },
+  { n: "Mope.io",        u: "https://mope.io",               c: "Growth",   d: "Animal survival ladder, eat and evolve." },
+  { n: "Lolbeans.io",    u: "https://lolbeans.io",           c: "Party",    d: "Obstacle-course battle royale." },
+  { n: "Smash Karts",    u: "https://smashkarts.io",         c: "Arcade",   d: "Kart deathmatch with pickups." },
+  { n: "1v1.LOL",        u: "https://1v1.lol",               c: "Shooter",  d: "Build-and-shoot duels.", pointer: true },
+  { n: "EvoWars.io",     u: "https://evowars.io",            c: "Growth",   d: "Swing a bigger and bigger sword as you level." },
+  { n: "Digdig.io",      u: "https://digdig.io",             c: "Growth",   d: "Dig, eat, and grow underground." },
+  { n: "Florr.io",       u: "https://florr.io",              c: "Growth",   d: "Petal-collecting survival with build crafting." },
+  { n: "Voxiom.io",      u: "https://voxiom.io",             c: "Shooter",  d: "Voxel shooter with building.", pointer: true },
+  { n: "Repuls.io",      u: "https://repuls.io",             c: "Shooter",  d: "Low-poly team FPS with vehicles.", pointer: true },
+  { n: "Bloxd.io",       u: "https://bloxd.io",              c: "Sandbox",  d: "Voxel sandbox with minigame modes.", pointer: true },
+  { n: "Sandspiel",      u: "https://sandspiel.club",        c: "Sandbox",  d: "Falling-sand element simulator." },
+  { n: "Territorial.io", u: "https://territorial.io",        c: "Strategy", d: "Territory-conquest map game against many bots." },
+  { n: "Generals.io",    u: "https://generals.io",           c: "Strategy", d: "Real-time fog-of-war army strategy." },
+  { n: "CrazyGames",     u: "https://www.crazygames.com",    c: "Portals",  d: "Large browser-game portal; many titles embed cleanly." },
+  { n: "Poki",           u: "https://poki.com",              c: "Portals",  d: "Browser-game portal with .io section." },
+  { n: "iogames.space",  u: "https://iogames.space",         c: "Portals",  d: "Aggregator that indexes .io games." },
+  { n: "Kongregate",     u: "https://www.kongregate.com",    c: "Portals",  d: "Long-running HTML5 game portal." }
+];
+
+/* ==========================================================================
+   Tiny helpers
+   ========================================================================== */
+const $ = (sel, root) => (root || document).querySelector(sel);
+
+function icon(name, size) {
+  const s = size || 16;
+  return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" ' +
+         'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+         'stroke-linejoin="round"><use href="#i-' + name + '"/></svg>';
+}
+
+/** Escape text before it goes anywhere near innerHTML. */
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/** Stable hue per string, so a site always gets the same tile colour. */
+function hueOf(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) % 360;
+  return h;
+}
+
+function hostOf(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ""); }
+  catch (e) { return url; }
+}
+
+/* ==========================================================================
+   Persistence — every access guarded; localStorage throws in some contexts
+   (private mode quota, blocked third-party storage, file:// in some builds).
+   ========================================================================== */
+const DEFAULTS = {
+  theme: "system",
+  showClock: true,
+  showDate: false,
+  hour24: false,
+  tabTitle: "",
+  tabIcon: "",
+  shield: true,
+  mic: false,
+  freeze: true,
+  timeout: 15000,
+  restore: true,
+  favourites: [],
+  embedMemory: {},   // host -> "ok" | "blocked"
+  session: []
+};
+
+function freshDefaults() { return JSON.parse(JSON.stringify(DEFAULTS)); }
+
+let settings = freshDefaults();
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      Object.keys(DEFAULTS).forEach(function (k) {
+        const want = DEFAULTS[k];
+        const got = parsed[k];
+        if (got === undefined || got === null) return;
+        /* Only accept a stored value that matches the shape of the default. */
+        if (Array.isArray(want)) { if (Array.isArray(got)) settings[k] = got; return; }
+        if (want !== null && typeof want === "object") {
+          if (typeof got === "object" && !Array.isArray(got)) settings[k] = got;
+          return;
+        }
+        if (typeof got === typeof want) settings[k] = got;
+      });
+    }
+  } catch (e) {
+    log("settings load failed: " + e.message);
+  }
+}
+
+/* Set by Reset so the beforeunload writer cannot resurrect the cleared key. */
+let storageDisabled = false;
+
+let saveTimer = null;
+function saveSettings() {
+  clearTimeout(saveTimer);
+  if (storageDisabled) return;
+  saveTimer = setTimeout(function () {
+    if (storageDisabled) return;
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(settings)); }
+    catch (e) { log("settings save failed: " + e.message); }
+  }, 180);
+}
+
+/* ==========================================================================
+   Diagnostics log — a bounded ring buffer, not an ever-growing string
+   ========================================================================== */
+const logLines = [];
+function log(msg) {
+  const t = new Date().toISOString().slice(11, 19);
+  logLines.push(t + "  " + msg);
+  if (logLines.length > LOG_MAX) logLines.splice(0, logLines.length - LOG_MAX);
+}
+
+/* ==========================================================================
+   Toasts — replaces the old blocking alert() calls
+   ========================================================================== */
+const toastHost = $("#toasts");
+
+function toast(message, kind, ms) {
+  const type = kind || "info";
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = icon({ ok: "ok", error: "err", warn: "warn", info: "info" }[type] || "info", 17) +
+                 "<span>" + esc(message) + "</span>";
+
+  const close = document.createElement("button");
+  close.className = "icon-btn";
+  close.style.cssText = "width:24px;height:24px";
+  close.setAttribute("aria-label", "Dismiss");
+  close.innerHTML = icon("x", 14);
+  el.appendChild(close);
+
+  let done = false;
+  function dismiss() {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    el.classList.add("out");
+    el.addEventListener("animationend", function () { el.remove(); }, { once: true });
+    setTimeout(function () { el.remove(); }, 400);   // belt and braces
+  }
+  close.addEventListener("click", dismiss);
+  const timer = setTimeout(dismiss, ms || 4200);
+
+  toastHost.appendChild(el);
+  while (toastHost.children.length > 4) toastHost.firstElementChild.remove();
+  log("toast[" + type + "] " + message);
+}
+
+/* ==========================================================================
+   Modal
+   ========================================================================== */
+const scrim = $("#modal-scrim");
+let lastFocus = null;
+
+function modal(title, bodyHtml, buttons) {
+  lastFocus = document.activeElement;
+  $("#modal-title").textContent = title;
+  $("#modal-body").innerHTML = bodyHtml;
+
+  const foot = $("#modal-foot");
+  foot.textContent = "";
+  (buttons || [{ label: "Close" }]).forEach(function (b) {
+    const btn = document.createElement("button");
+    btn.className = "btn" + (b.primary ? " primary" : "") + (b.danger ? " danger" : "");
+    btn.textContent = b.label;
+    btn.addEventListener("click", function () {
+      closeModal();
+      if (b.onClick) b.onClick();
+    });
+    foot.appendChild(btn);
+  });
+
+  scrim.hidden = false;
+  const first = foot.querySelector("button");
+  if (first) first.focus();
+}
+
+function closeModal() {
+  if (scrim.hidden) return;
+  scrim.hidden = true;
+  if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+  lastFocus = null;
+}
+
+scrim.addEventListener("click", function (e) { if (e.target === scrim) closeModal(); });
+
+/* ==========================================================================
+   Theme
+   ========================================================================== */
+const mqDark = window.matchMedia("(prefers-color-scheme: light)");
+
+function applyTheme() {
+  const resolved = settings.theme === "system"
+    ? (mqDark.matches ? "light" : "dark")
+    : settings.theme;
+  document.documentElement.setAttribute("data-theme", resolved);
+  const use = $("#theme-icon");
+  if (use) use.setAttribute("href", resolved === "dark" ? "#i-moon" : "#i-sun");
+}
+if (mqDark.addEventListener) {
+  mqDark.addEventListener("change", function () { if (settings.theme === "system") applyTheme(); });
+}
+
+/* ==========================================================================
+   Clock — one tick per second, aligned to the second boundary, and it writes
+   to the DOM only when the rendered text actually changes.
+   (The old build ran two setInterval(…, 100) timers: 20 layout-invalidating
+   DOM writes every second, forever, competing with the game for frame time.)
+   ========================================================================== */
+const clockEl = $("#clock");
+const clockTime = $("#clock-time");
+const clockDate = $("#clock-date");
+let clockTimer = null;
+let lastTime = "";
+let lastDate = "";
+
+function tickClock() {
+  if (!settings.showClock) return;
+  const now = new Date();
+
+  let h = now.getHours();
+  const m = String(now.getMinutes()).padStart(2, "0");
+  let text;
+  if (settings.hour24) {
+    text = String(h).padStart(2, "0") + ":" + m;
+  } else {
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    text = h + ":" + m + " " + ampm;
+  }
+  if (text !== lastTime) { clockTime.textContent = text; lastTime = text; }
+
+  const d = settings.showDate
+    ? (now.getMonth() + 1) + "/" + now.getDate() + "/" + String(now.getFullYear()).slice(-2)
+    : "";
+  if (d !== lastDate) { clockDate.textContent = d; lastDate = d; }
+}
+
+function scheduleClock() {
+  clearTimeout(clockTimer);
+  if (!settings.showClock) return;
+  tickClock();
+  clockTimer = setTimeout(scheduleClock, 1000 - (Date.now() % 1000) + 5);
+}
+
+function refreshClock() {
+  clockEl.style.display = settings.showClock ? "" : "none";
+  lastTime = lastDate = null;
+  if (!settings.showClock) { clockTime.textContent = ""; clockDate.textContent = ""; }
+  scheduleClock();
+}
+
+/* Stop the clock entirely while the page is hidden — no wasted wakeups. */
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) clearTimeout(clockTimer);
+  else scheduleClock();
+});
+
+/* ==========================================================================
+   Tab model
+
+   A tab owns its own <iframe> and its own history. The old build called
+   window.history.back() and window.location.reload(), which navigated the
+   whole shell away instead of the embedded page — reloading dropped every
+   open tab. Back/forward/reload here act on the active tab only.
+   ========================================================================== */
+const frameLayer = $("#frame-layer");
+const tabsEl     = $("#tabs");
+const stage      = $("#stage");
+
+/** @type {Array<Tab>} */
+const tabs = [];
+let activeId = null;
+let seq = 0;
+
+function makeTab(url, opts) {
+  const o = opts || {};
+  const tab = {
+    id: "t" + (++seq),
+    url: url || "",
+    title: url ? hostOf(url) : "New tab",
+    history: [],
+    hi: -1,          // history index
+    status: "idle",  // idle | loading | ok | blocked | timeout
+    nav: 0,          // navigation token, guards stale load events
+    timer: null,
+    hintTimer: null,
+    alive: false,     /* the user has interacted with this frame since it loaded */
+    closed: false,
+    frame: null,
+    shield: null
+  };
+  tabs.push(tab);
+
+  if (url && o.defer) {
+    /* Deferred: remember where this tab points, but don't spend a network
+       request or a renderer on it until the user actually looks at it. */
+    const clean = normalizeUrl(url);
+    if (!clean) { tabs.splice(tabs.indexOf(tab), 1); return null; }
+    tab.url = clean;
+    tab.title = hostOf(clean);
+    tab.history = [clean];
+    tab.hi = 0;
+    renderTabs();
+    return tab;
+  }
+
+  if (url && !navigate(tab, url, { push: true, silent: o.silent })) {
+    /* Bad URL: drop the tab again rather than leaving an empty ghost behind. */
+    tabs.splice(tabs.indexOf(tab), 1);
+    renderTabs();
+    return null;
+  }
+  renderTabs();
+  if (!o.background) activate(tab.id);
+  return tab;
+}
+
+function getTab(id) {
+  for (let i = 0; i < tabs.length; i++) if (tabs[i].id === id) return tabs[i];
+  return null;
+}
+function activeTab() { return getTab(activeId); }
+
+/* ------------------------------------------------------------------ *
+ * Frame creation — the part that actually decides whether a game is
+ * playable once it has loaded.
+ * ------------------------------------------------------------------ */
+/* Which Permissions Policy tokens does this browser actually implement?
+   An unrecognised token is ignored either way, but Chrome logs a console
+   warning for each one, so filtering keeps the console clean without changing
+   behaviour. Measured in Chromium: `pointer-lock` and `web-share` are not
+   registered features there, and a frame reports allowsFeature('pointer-lock')
+   === false whether or not the token is present - it is genuinely inert. Chrome
+   gates pointer lock on the frame not being sandboxed instead, which is why the
+   note above matters far more than this list does. The token stays in BASE_ALLOW
+   for engines that do implement it. */
+const SUPPORTED_FEATURES = (function () {
+  try {
+    if (document.featurePolicy && document.featurePolicy.features) {
+      return document.featurePolicy.features();
+    }
+  } catch (e) { /* non-standard API, absent outside Chromium */ }
+  return null;   /* unknown -> send the whole list and let the browser sort it out */
+})();
+
+const HAS_FULLSCREEN_POLICY =
+  !!SUPPORTED_FEATURES && SUPPORTED_FEATURES.indexOf("fullscreen") !== -1;
+
+function buildAllowList() {
+  let list = BASE_ALLOW.slice();
+  if (settings.mic) list.push("microphone");
+  if (SUPPORTED_FEATURES) {
+    list = list.filter(function (f) { return SUPPORTED_FEATURES.indexOf(f) !== -1; });
+  }
+  /* A bare token in `allow` means "this origin only". `*` grants it to the frame
+     whatever origin it navigates to, which is what a game portal that bounces
+     you to a CDN needs. */
+  return list.map(function (f) { return f + " *"; }).join("; ");
+}
+
+function ensureFrame(tab) {
+  if (tab.frame) return tab.frame;
+  const f = document.createElement("iframe");
+  f.className = "frame";
+  f.dataset.tab = tab.id;
+  f.setAttribute("title", "Embedded page");
+  f.setAttribute("allow", buildAllowList());
+  /* Legacy alias. Where Permissions Policy already covers fullscreen, adding it
+     only makes Chrome warn that `allow` takes precedence, so it is set solely
+     for browsers that need it. */
+  if (!HAS_FULLSCREEN_POLICY) f.setAttribute("allowfullscreen", "");
+  f.setAttribute("referrerpolicy", "no-referrer");
+  f.setAttribute("loading", "eager");
+  /* Visible straight away when this is the tab on screen. A hard reload
+     replaces the element, and only activate() used to clear `hidden`, so
+     reloading the active tab left a blank stage. */
+  f.hidden = (tab.id !== activeId);
+  // NOTE: no `sandbox` attribute. See the comment at the top of this script.
+  frameLayer.appendChild(f);
+  tab.frame = f;
+
+  f.addEventListener("load", function () { onFrameLoad(tab, f); });
+  return f;
+}
+
+/** Normalise whatever the user typed into a URL we can actually frame. */
+function normalizeUrl(input) {
+  let s = String(input || "").trim();
+  if (!s) return null;
+
+  // Strip a duplicated scheme like "https://https://foo.io" — the old build
+  // blindly prefixed "https://" onto whatever was typed.
+  s = s.replace(/^(https?:\/\/)+/i, function (m) { return m.slice(0, m.indexOf("//") + 2); });
+
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) s = "https://" + s;
+
+  let u;
+  try { u = new URL(s); } catch (e) { return null; }
+
+  if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+
+  // This page is served over https; an http frame is blocked as mixed content
+  // and fails with no visible error. Upgrade it and say so.
+  if (u.protocol === "http:" && location.protocol === "https:") {
+    u.protocol = "https:";
+    toast("Upgraded to https — an http page can't be embedded in an https site.", "warn");
+  }
+  /* Reject only what genuinely isn't a host. A bare word like "krunker" never
+     reaches here - the omnibox routes it to the library search first - so
+     demanding a dot would only break localhost and intranet hostnames. */
+  if (!u.hostname) return null;
+  const bareHost = u.hostname === "localhost" ||
+                   /^\[?[0-9a-f:.]+\]?$/i.test(u.hostname);   /* IPv4 / IPv6 literal */
+  if (u.hostname.indexOf(".") === -1 && !bareHost) return null;
+
+  return u.href;
+}
+
+function navigate(tab, rawUrl, opts) {
+  const o = opts || {};
+  const url = o.trusted ? rawUrl : normalizeUrl(rawUrl);
+  if (!url) {
+    if (!o.silent) toast("That doesn't look like a web address.", "error");
+    return false;
+  }
+
+  /* Re-assigning iframe.src the value it already holds is not a dependable
+     reload, and contentWindow.location.reload() throws on a cross-origin
+     frame. Dropping the element and building a fresh one always works. */
+  if (o.hard && tab.frame) {
+    tab.frame.src = "about:blank";
+    tab.frame.remove();
+    tab.frame = null;
+  }
+
+  const f = ensureFrame(tab);
+  tab.nav++;
+  const token = tab.nav;
+
+  tab.url = url;
+  tab.title = hostOf(url);
+  setStatus(tab, "loading");
+
+  if (o.push !== false) {
+    tab.history = tab.history.slice(0, tab.hi + 1);
+    if (tab.history[tab.history.length - 1] !== url) tab.history.push(url);
+    tab.hi = tab.history.length - 1;
+  }
+
+  clearTimeout(tab.timer);
+  if (settings.timeout > 0) {
+    tab.timer = setTimeout(function () {
+      if (tab.nav !== token || tab.status !== "loading") return;
+      setStatus(tab, "timeout");
+      log("timeout " + url);
+      if (tab.id === activeId) renderStage();
+    }, settings.timeout);
+  }
+
+  removeShield(tab);
+  clearTimeout(tab.hintTimer);
+  hideHint();
+  tab.alive = false;
+  f.src = url;
+  log("navigate " + tab.id + " -> " + url);
+  renderTabs();
+  syncChrome();
+  return true;
+}
+
+/* ------------------------------------------------------------------ *
+ * Did the embed actually work?
+ *
+ * This was measured in Chromium, not assumed, and the answer is humbling:
+ * for a CROSS-ORIGIN frame, a refused load and a successful load are
+ * indistinguishable from the embedding page. Both fire `load`; both throw
+ * SecurityError on contentWindow.location; both report contentDocument === null
+ * and contentWindow.length === 0; and both produce a Resource Timing entry with
+ * transferSize, encodedBodySize and responseStatus all zero. There is no signal
+ * that separates them.
+ *
+ * So we do not pretend. classifyFrame() returns one of three answers, and only
+ * the first two are ever stated as fact:
+ *
+ *   "loaded"  - provable. Either the frame is same-origin and its URL reads back,
+ *               or the site sends Timing-Allow-Origin and a real body size shows
+ *               up in Resource Timing.
+ *   "refused" - provable, same-origin only: the frame sat on about:blank.
+ *   "opaque"  - genuinely unknowable. The UI offers a fallback instead of a
+ *               verdict, and the real answer comes from what the user does next.
+ * ------------------------------------------------------------------ */
+function classifyFrame(tab, f) {
+  try {
+    const w = f.contentWindow;
+    const href = w && w.location.href;      /* throws when cross-origin */
+    if (typeof href === "string") {
+      return (!href || href === "about:blank") ? "refused" : "loaded";
+    }
+  } catch (e) { /* cross-origin - nothing conclusive here */ }
+
+  try {
+    const entries = performance.getEntriesByName(tab.url);
+    const e = entries.length ? entries[entries.length - 1] : null;
+    if (e && (e.transferSize > 0 || e.encodedBodySize > 0)) return "loaded";
+  } catch (e) { /* Resource Timing unavailable */ }
+
+  return "opaque";
+}
+
+/* Embed memory is only ever written from evidence that cannot be wrong:
+     - classifyFrame() proved the outcome (same-origin, or a real body size);
+     - the user reached for the fallback  -> blocked;
+     - the user pressed "It's working"    -> ok.
+   Nothing is ever inferred from focus, timing or the frame merely existing. */
+function rememberEmbed(host, verdict) {
+  if (!host || settings.embedMemory[host] === verdict) return;
+  settings.embedMemory[host] = verdict;
+  saveSettings();
+  log("remember " + host + " = " + verdict);
+  if (openPanel === "library") renderLibrary();
+}
+
+function onFrameLoad(tab, f) {
+  /* Three loads we must ignore, or a good site gets recorded as blocked:
+       - the frame's own initial about:blank document, which fires before we
+         have navigated anywhere;
+       - the about:blank we assign while tearing a tab down;
+       - a load left over from a previous navigation in this tab.
+     Comparing the frame's resolved src against the URL we asked for rules out
+     all three. */
+  if (tab.closed || !tab.url) return;
+  if (f.src !== tab.url) return;
+
+  clearTimeout(tab.timer);
+
+  const host = hostOf(tab.url);
+  const verdict = classifyFrame(tab, f);
+  log("load " + host + " => " + verdict);
+
+  if (verdict === "refused") {
+    setStatus(tab, "blocked");
+    rememberEmbed(host, "blocked");
+  } else {
+    setStatus(tab, "ok");
+    if (verdict === "loaded") rememberEmbed(host, "ok");
+    if (settings.shield && tab.id === activeId) addShield(tab);
+    if (verdict === "opaque") armHint(tab);
+  }
+
+  if (tab.id === activeId) renderStage();
+  renderTabs();
+}
+
+/* ------------------------------------------------------------------ *
+ * The soft hint
+ *
+ * For an opaque frame we cannot know whether the user is staring at a game or
+ * at nothing, so we wait a few seconds and ask. If they start playing, the
+ * question answers itself and the hint never appears.
+ * ------------------------------------------------------------------ */
+const hintBar  = $("#embed-hint");
+const hintHost = $("#hint-host");
+
+function armHint(tab) {
+  clearTimeout(tab.hintTimer);
+  tab.hintTimer = setTimeout(function () {
+    if (tab.closed || tab.alive || tab.id !== activeId || openPanel) return;
+    hintHost.textContent = hostOf(tab.url);
+    hintBar.hidden = false;
+  }, 4500);
+}
+
+function hideHint() { hintBar.hidden = true; }
+
+/* The user has interacted with the frame, so stop offering the hint for this
+   load. Deliberately does NOT record a verdict: a frame taking focus proves
+   only that it took focus. A browser error page accepts focus in exactly the
+   same way, which is how a refused site used to get recorded as "plays here"
+   and then permanently suppress its own fallback hint. */
+function markAlive(tab) {
+  if (!tab || tab.alive) return;
+  tab.alive = true;
+  clearTimeout(tab.hintTimer);
+  hideHint();
+}
+
+/* Reaching for the fallback is the clearest evidence the embed failed. */
+function fallbackToTab(tab) {
+  if (!tab || !tab.url) { toast("Open a page first.", "info"); return; }
+  rememberEmbed(hostOf(tab.url), "blocked");
+  hideHint();
+  openExternally(tab.url);
+}
+
+function setStatus(tab, status) {
+  tab.status = status;
+  if (tab.id === activeId) renderStage();
+}
+
+/* ------------------------------------------------------------------ *
+ * Click-to-focus shield
+ *
+ * A cross-origin frame does not receive keyboard events until something
+ * inside it has focus. Clicking the game usually does it — but on a fresh
+ * load the parent document holds focus, so the first WASD presses go
+ * nowhere and the game looks broken. The shield makes that one required
+ * click explicit, then focuses the frame.
+ * ------------------------------------------------------------------ */
+function addShield(tab) {
+  removeShield(tab);
+  const el = document.createElement("div");
+  el.className = "focus-shield";
+  el.innerHTML = '<div class="pill">' + icon("cursor", 17) + " Click to play</div>";
+  el.addEventListener("click", function () {
+    removeShield(tab);
+    focusFrame(tab);
+    markAlive(tab);
+  });
+  stage.appendChild(el);
+  tab.shield = el;
+}
+
+function removeShield(tab) {
+  if (tab.shield) { tab.shield.remove(); tab.shield = null; }
+}
+
+function focusFrame(tab) {
+  if (!tab || !tab.frame) return;
+  try {
+    tab.frame.focus({ preventScroll: true });
+    // contentWindow.focus() is allowed cross-origin and is what actually
+    // routes key events into the guest document.
+    if (tab.frame.contentWindow) tab.frame.contentWindow.focus();
+  } catch (e) { /* cross-origin restrictions vary; the outer focus() is enough */ }
+}
+
+/** True when keystrokes are currently going to an embedded page. */
+function frameHasFocus() {
+  const el = document.activeElement;
+  return !!(el && el.tagName === "IFRAME");
+}
+
+/* ==========================================================================
+   Activation / rendering
+   ========================================================================== */
+function activate(id) {
+  const tab = getTab(id);
+  if (!tab) return;
+  activeId = id;
+
+  /* A deferred tab loads the moment it is first looked at. */
+  if (tab.url && !tab.frame) navigate(tab, tab.url, { trusted: true, push: false });
+
+  for (let i = 0; i < tabs.length; i++) {
+    const t = tabs[i];
+    if (!t.frame) continue;
+    const on = t.id === id;
+    // `hidden` (display:none) takes the frame out of the render tree entirely,
+    // so a background game stops painting instead of fighting for GPU time.
+    if (settings.freeze) {
+      t.frame.hidden = !on;
+      t.frame.style.visibility = "";
+      t.frame.style.zIndex = "";
+    } else {
+      t.frame.hidden = false;
+      t.frame.style.visibility = on ? "" : "hidden";
+      t.frame.style.zIndex = on ? "1" : "0";
+    }
+    if (!on) { removeShield(t); clearTimeout(t.hintTimer); }
+  }
+  hideHint();
+
+  renderTabs();
+  renderStage();
+  syncChrome();
+  persistSession();
+}
+
+function renderTabs() {
+  const frag = document.createDocumentFragment();
+
+  tabs.forEach(function (t) {
+    const el = document.createElement("div");
+    el.className = "tab";
+    el.setAttribute("role", "tab");
+    el.setAttribute("aria-selected", t.id === activeId ? "true" : "false");
+    el.setAttribute("tabindex", t.id === activeId ? "0" : "-1");
+    el.dataset.id = t.id;
+    el.title = t.url || "New tab";
+
+    if (t.status === "loading") {
+      el.innerHTML = '<div class="spinner"></div>';
+    } else {
+      const hue = hueOf(t.title || "q");
+      el.innerHTML =
+        '<div class="favicon" style="background:hsl(' + hue + ' 62% 52%);color:#fff;' +
+        'font-size:9px;font-weight:700;display:grid;place-items:center">' +
+        esc((t.title || "?").charAt(0).toUpperCase()) + "</div>";
+    }
+
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = t.title || "New tab";
+    el.appendChild(label);
+
+    if (t.status === "blocked" || t.status === "timeout") {
+      const warn = document.createElement("span");
+      warn.style.cssText = "color:var(--warn);display:flex";
+      warn.title = "This site refused to be embedded";
+      warn.innerHTML = icon("warn", 13);
+      el.appendChild(warn);
+    }
+
+    const close = document.createElement("button");
+    close.className = "close";
+    close.setAttribute("aria-label", "Close " + (t.title || "tab"));
+    close.innerHTML = icon("x", 13);
+    el.appendChild(close);
+
+    frag.appendChild(el);
+  });
+
+  tabsEl.textContent = "";
+  tabsEl.appendChild(frag);
+
+  const sel = tabsEl.querySelector('[aria-selected="true"]');
+  if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: "nearest", inline: "nearest" });
+}
+
+/* One delegated listener for the whole strip — not one pair per tab, and no
+   stale closures over array indices (the old deleteTab() spliced the array
+   while every tab's click handler still captured its original index, so after
+   one close every remaining tab pointed at the wrong frame). */
+tabsEl.addEventListener("click", function (e) {
+  const tabEl = e.target.closest(".tab");
+  if (!tabEl) return;
+  if (e.target.closest(".close")) { closeTab(tabEl.dataset.id); return; }
+  activate(tabEl.dataset.id);
+});
+
+tabsEl.addEventListener("auxclick", function (e) {
+  if (e.button !== 1) return;                    // middle-click closes
+  const tabEl = e.target.closest(".tab");
+  if (tabEl) { e.preventDefault(); closeTab(tabEl.dataset.id); }
+});
+
+function closeTab(id) {
+  const idx = tabs.findIndex(function (t) { return t.id === id; });
+  if (idx === -1) return;
+  const t = tabs[idx];
+
+  t.closed = true;
+  clearTimeout(t.timer);
+  clearTimeout(t.hintTimer);
+  removeShield(t);
+  hideHint();
+  if (t.frame) {
+    /* Blank it before detaching so audio, WebSockets and rAF loops inside the
+       game actually stop; a detached-but-live frame keeps running in Chrome. */
+    t.frame.src = "about:blank";
+    t.frame.remove();
+    t.frame = null;
+  }
+  tabs.splice(idx, 1);
+  log("close " + id);
+
+  if (activeId === id) {
+    const next = tabs[Math.min(idx, tabs.length - 1)];
+    if (next) activate(next.id);
+    else { activeId = null; showPanel("library"); renderTabs(); syncChrome(); }
+  } else {
+    renderTabs();
+  }
+  persistSession();
+}
+
+/* ==========================================================================
+   Panels + stage state
+   ========================================================================== */
+const panels = { library: $("#panel-library"), settings: $("#panel-settings") };
+const blockedState = $("#state-blocked");
+let openPanel = "library";
+
+function showPanel(name) {
+  openPanel = name;
+  if (name) hideHint();
+  Object.keys(panels).forEach(function (k) { panels[k].hidden = (k !== name); });
+  $("#btn-settings").classList.toggle("is-on", name === "settings");
+  $("#btn-home").classList.toggle("is-on", name === "library");
+  renderStage();
+}
+
+function hidePanels() {
+  openPanel = null;
+  Object.keys(panels).forEach(function (k) { panels[k].hidden = true; });
+  $("#btn-settings").classList.remove("is-on");
+  $("#btn-home").classList.remove("is-on");
+  renderStage();
+}
+
+function renderStage() {
+  const t = activeTab();
+  const panelOpen = !!openPanel;
+  const failed = !!t && (t.status === "blocked" || t.status === "timeout");
+
+  blockedState.hidden = panelOpen || !failed;
+
+  if (failed && !panelOpen) {
+    const host = hostOf(t.url);
+    $("#blocked-title").textContent = t.status === "timeout"
+      ? "This page didn't finish loading"
+      : host + " refused to be embedded";
+    $("#blocked-msg").textContent = t.status === "timeout"
+      ? "Nothing arrived within the embed timeout. The site may be slow, down, or unreachable from this network. Raise the timeout in Settings to wait longer, or just open it directly."
+      : "This site refused to be displayed inside a frame. The browser enforces that refusal before any of this page's code runs, so it cannot be overridden here — but opening it as a normal tab works fine.";
+  }
+
+  if (!panelOpen && t && t.frame) removeShieldIfPanelless(t);
+}
+
+function removeShieldIfPanelless(t) {
+  if (t.shield) t.shield.style.display = openPanel ? "none" : "";
+}
+
+/* ==========================================================================
+   Library
+   ========================================================================== */
+const libGrid   = $("#lib-grid");
+const favGrid   = $("#fav-grid");
+const favSection= $("#fav-section");
+const libChips  = $("#lib-chips");
+const libSearch = $("#lib-search");
+const libCount  = $("#lib-count");
+
+const CATEGORIES = ["All"].concat(
+  GAMES.map(function (g) { return g.c; })
+       .filter(function (v, i, a) { return a.indexOf(v) === i; })
+       .sort()
+);
+let activeCat = "All";
+let libQuery = "";
+
+function isFav(url) { return settings.favourites.indexOf(url) !== -1; }
+
+function toggleFav(url) {
+  const i = settings.favourites.indexOf(url);
+  if (i === -1) settings.favourites.push(url);
+  else settings.favourites.splice(i, 1);
+  saveSettings();
+  renderLibrary();
+}
+
+/* These badges reflect evidence, never a guess. "plays here" is set once you
+   have actually played the game in a frame; "use a real tab" is set when a
+   refusal was provable, or when you reached for the fallback yourself. */
+function embedBadge(game) {
+  const known = settings.embedMemory[hostOf(game.u)];
+  if (known === "ok") {
+    return '<span class="badge ok" title="You have played this in a frame on this device">plays here</span>';
+  }
+  if (known === "blocked") {
+    return '<span class="badge bad" title="Refused to embed, or you opened it in a real tab">use a real tab</span>';
+  }
+  return '<span class="badge" title="Not tried yet on this device">untried</span>';
+}
+
+function cardHtml(g) {
+  const hue = hueOf(g.n);
+  const fav = isFav(g.u);
+  return '' +
+    '<div class="card" role="button" tabindex="0" data-url="' + esc(g.u) + '" ' +
+         'title="' + esc(g.u) + '" aria-label="Play ' + esc(g.n) + '">' +
+      '<button type="button" class="card-fav' + (fav ? " on" : "") + '" data-fav="' + esc(g.u) + '" ' +
+              'aria-pressed="' + fav + '" aria-label="' +
+              (fav ? "Remove " : "Add ") + esc(g.n) + ' to favourites">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="' + (isFav(g.u) ? "currentColor" : "none") +
+        '" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><use href="#i-star"/></svg>' +
+      '</button>' +
+      '<span class="card-top">' +
+        '<span class="card-mark" style="background:hsl(' + hue + ' 60% 50% / .16);color:hsl(' + hue + ' 70% 62%)">' +
+          esc(g.n.charAt(0)) +
+        '</span>' +
+        '<span class="card-name">' + esc(g.n) + '</span>' +
+      '</span>' +
+      '<span class="card-desc">' + esc(g.d) + '</span>' +
+      '<span class="card-foot">' +
+        '<span class="badge">' + esc(g.c) + '</span>' +
+        embedBadge(g) +
+        (g.pointer ? '<span class="badge lock" title="Mouse-look game: needs pointer lock, which these frames allow">mouse-look</span>' : "") +
+      '</span>' +
+    '</div>';
+}
+
+function renderChips() {
+  libChips.innerHTML = CATEGORIES.map(function (c) {
+    return '<button class="chip" data-cat="' + esc(c) + '" aria-pressed="' +
+           (c === activeCat) + '">' + esc(c) + "</button>";
+  }).join("");
+}
+
+function renderLibrary() {
+  const q = libQuery.toLowerCase();
+  const matches = GAMES.filter(function (g) {
+    if (activeCat !== "All" && g.c !== activeCat) return false;
+    if (!q) return true;
+    return (g.n + " " + g.d + " " + g.c + " " + g.u).toLowerCase().indexOf(q) !== -1;
+  });
+
+  const favs = GAMES.filter(function (g) { return isFav(g.u); });
+  favSection.hidden = favs.length === 0;
+  if (favs.length) favGrid.innerHTML = favs.map(cardHtml).join("");
+
+  libCount.textContent = matches.length + (matches.length === 1 ? " game" : " games") +
+                         (activeCat === "All" ? "" : " · " + activeCat);
+
+  libGrid.innerHTML = matches.length
+    ? matches.map(cardHtml).join("")
+    : '<p style="color:var(--text-dim);font-size:var(--fs-sm);grid-column:1/-1">' +
+      "No games match that filter. You can still type any address in the bar above.</p>";
+}
+
+/* Delegated: one listener covers both grids and survives every re-render. */
+function onGridClick(e) {
+  const fav = e.target.closest("[data-fav]");
+  if (fav) { e.preventDefault(); e.stopPropagation(); toggleFav(fav.dataset.fav); return; }
+  const card = e.target.closest(".card");
+  if (!card) return;
+  openUrl(card.dataset.url);
+}
+function onGridKey(e) {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  const card = e.target.closest(".card");
+  if (!card || e.target.closest("[data-fav]")) return;
+  e.preventDefault();
+  openUrl(card.dataset.url);
+}
+
+libGrid.addEventListener("click", onGridClick);
+favGrid.addEventListener("click", onGridClick);
+libGrid.addEventListener("keydown", onGridKey);
+favGrid.addEventListener("keydown", onGridKey);
+
+libChips.addEventListener("click", function (e) {
+  const chip = e.target.closest("[data-cat]");
+  if (!chip) return;
+  activeCat = chip.dataset.cat;
+  renderChips();
+  renderLibrary();
+});
+
+let searchDebounce = null;
+libSearch.addEventListener("input", function () {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(function () {
+    libQuery = libSearch.value.trim();
+    renderLibrary();
+  }, 120);
+});
+
+/* ==========================================================================
+   Opening things
+   ========================================================================== */
+function openUrl(raw) {
+  const url = normalizeUrl(raw);
+  if (!url) { toast("That doesn't look like a web address.", "error"); return; }
+
+  const t = activeTab();
+  if (t) navigate(t, url, { trusted: true, push: true });
+  else makeTab(url);
+  hidePanels();
+}
+
+function openExternally(url) {
+  const w = window.open(url, "_blank", "noopener,noreferrer");
+  if (!w) toast("Your browser blocked the pop-up. Allow pop-ups for this page and try again.", "warn", 6000);
+  else log("external open " + url);
+}
+
+/* ==========================================================================
+   Chrome controls
+   ========================================================================== */
+const omnibox = $("#omnibox");
+const btnBack = $("#btn-back");
+const btnFwd  = $("#btn-fwd");
+
+function syncChrome() {
+  const t = activeTab();
+  btnBack.disabled = !t || t.hi <= 0;
+  btnFwd.disabled  = !t || t.hi < 0 || t.hi >= t.history.length - 1;
+  if (t && document.activeElement !== omnibox) omnibox.value = t.url || "";
+}
+
+$("#omnibox-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const raw = omnibox.value.trim();
+  if (!raw) return;
+
+  // No dot and no scheme? Treat it as a library search rather than firing off
+  // a doomed navigation to "https://<word>".
+  if (!/[.:]/.test(raw)) {
+    libQuery = raw;
+    libSearch.value = raw;
+    activeCat = "All";
+    renderChips();
+    renderLibrary();
+    showPanel("library");
+    toast('Searching the library for "' + raw + '".', "info");
+    return;
+  }
+  /* Blur BEFORE navigating: syncChrome() deliberately won't overwrite the
+     address bar while you're typing in it, so navigating first left the raw
+     input on screen instead of the resolved URL. */
+  omnibox.blur();
+  openUrl(raw);
+  syncChrome();
+});
+
+btnBack.addEventListener("click", function () {
+  const t = activeTab();
+  if (!t || t.hi <= 0) return;
+  t.hi--;
+  navigate(t, t.history[t.hi], { trusted: true, push: false });
+});
+
+btnFwd.addEventListener("click", function () {
+  const t = activeTab();
+  if (!t || t.hi >= t.history.length - 1) return;
+  t.hi++;
+  navigate(t, t.history[t.hi], { trusted: true, push: false });
+});
+
+function reloadActive() {
+  const t = activeTab();
+  if (!t || !t.url) { toast("Nothing to reload.", "info"); return; }
+  navigate(t, t.url, { trusted: true, push: false, hard: true });
+}
+$("#btn-reload").addEventListener("click", reloadActive);
+
+$("#btn-home").addEventListener("click", function () {
+  showPanel(openPanel === "library" ? null : "library");
+});
+
+$("#btn-settings").addEventListener("click", function () {
+  showPanel(openPanel === "settings" ? null : "settings");
+});
+$("#btn-close-settings").addEventListener("click", function () { showPanel("library"); });
+
+$("#btn-newtab").addEventListener("click", function () {
+  makeTab(null);
+  showPanel("library");
+  omnibox.value = "";
+  omnibox.focus();
+});
+
+$("#btn-popout").addEventListener("click", function () {
+  const t = activeTab();
+  if (!t || !t.url) { toast("Open a page first.", "info"); return; }
+  /* Deliberately NOT recorded as an embed failure - the user may simply prefer
+     a real tab for a page that embeds perfectly well. */
+  openExternally(t.url);
+});
+
+/* Fullscreen the FRAME, not the document — and from a click, because a
+   fullscreen request without a user gesture is rejected outright. (The old
+   build called requestFullscreen() at parse time; Chrome refused it every
+   single load and logged an error.) */
+$("#btn-fullscreen").addEventListener("click", function () {
+  const t = activeTab();
+  const framed = t && t.frame && !t.frame.hidden && !openPanel;
+  const target = framed ? t.frame : document.documentElement;
+
+  if (document.fullscreenElement) { document.exitFullscreen(); return; }
+
+  const req = target.requestFullscreen || target.webkitRequestFullscreen ||
+              target.mozRequestFullScreen || target.msRequestFullscreen;
+  if (!req) { toast("Fullscreen isn't available in this browser.", "warn"); return; }
+
+  Promise.resolve(req.call(target)).then(function () {
+    if (t) focusFrame(t);
+  }).catch(function (err) {
+    toast("Fullscreen was refused: " + (err && err.message ? err.message : "unknown"), "warn");
+  });
+});
+
+$("#btn-theme").addEventListener("click", function () {
+  const order = ["dark", "light"];
+  const current = document.documentElement.getAttribute("data-theme");
+  settings.theme = order[(order.indexOf(current) + 1) % order.length];
+  $("#set-theme").value = settings.theme;
+  applyTheme();
+  saveSettings();
+});
+
+/* Hint bar */
+$("#hint-dismiss").innerHTML = icon("x", 14);
+$("#hint-open").addEventListener("click", function () { fallbackToTab(activeTab()); });
+
+/* The only way an opaque frame is ever recorded as working: the user said so. */
+$("#hint-ok").addEventListener("click", function () {
+  const t = activeTab();
+  if (t && t.url) { rememberEmbed(hostOf(t.url), "ok"); t.alive = true; }
+  hideHint();
+  toast("Noted \u2014 marked as playable here.", "ok");
+});
+
+$("#hint-dismiss").addEventListener("click", function () {
+  const t = activeTab();
+  if (t) t.alive = true;          /* stop nagging for this load, record nothing */
+  hideHint();
+});
+
+/* Blocked-state actions */
+$("#blocked-open").addEventListener("click", function () { fallbackToTab(activeTab()); });
+$("#blocked-retry").addEventListener("click", reloadActive);
+$("#blocked-lib").addEventListener("click", function () { showPanel("library"); });
+
+/* ==========================================================================
+   Settings wiring
+   ========================================================================== */
+function bindSwitch(id, key, onChange) {
+  const el = $(id);
+  function paint() { el.setAttribute("aria-checked", settings[key] ? "true" : "false"); }
+  el.addEventListener("click", function () {
+    settings[key] = !settings[key];
+    paint();
+    saveSettings();
+    if (onChange) onChange(settings[key]);
+  });
+  paint();
+  return paint;
+}
+
+const paintClock   = bindSwitch("#set-clock",   "showClock", refreshClock);
+const paintDate    = bindSwitch("#set-date",    "showDate",  function () { lastDate = null; tickClock(); });
+const paint24h     = bindSwitch("#set-24h",     "hour24",    function () { lastTime = null; tickClock(); });
+const paintShield  = bindSwitch("#set-shield",  "shield");
+const paintMic     = bindSwitch("#set-mic",     "mic", function () {
+  const list = buildAllowList();
+  tabs.forEach(function (t) { if (t.frame) t.frame.setAttribute("allow", list); });
+  toast("Reload a tab for the new permissions to take effect.", "info");
+});
+const paintFreeze  = bindSwitch("#set-freeze",  "freeze", function () { if (activeId) activate(activeId); });
+const paintRestore = bindSwitch("#set-restore", "restore", persistSession);
+
+const setThemeSel = $("#set-theme");
+setThemeSel.addEventListener("change", function () {
+  settings.theme = setThemeSel.value;
+  applyTheme();
+  saveSettings();
+});
+
+const setTimeoutSel = $("#set-timeout");
+setTimeoutSel.addEventListener("change", function () {
+  settings.timeout = parseInt(setTimeoutSel.value, 10) || 0;
+  saveSettings();
+});
+
+/* --- page identity -------------------------------------------------- */
+const titleTagEl = $("#tab-title");
+const iconLinkEl = $("#tab-icon-el");
+const DEFAULT_ICON = iconLinkEl.getAttribute("href");
+const setTitleInput = $("#set-title");
+const setIconInput  = $("#set-icon");
+
+function applyIdentity() {
+  document.title = settings.tabTitle || "Quix Browser";
+  if (titleTagEl) titleTagEl.textContent = document.title;
+
+  if (!settings.tabIcon) { iconLinkEl.setAttribute("href", DEFAULT_ICON); return; }
+  let host;
+  try {
+    const s = /^https?:\/\//i.test(settings.tabIcon) ? settings.tabIcon : "https://" + settings.tabIcon;
+    host = new URL(s).hostname;
+  } catch (e) {
+    iconLinkEl.setAttribute("href", DEFAULT_ICON);
+    return;
+  }
+  iconLinkEl.setAttribute("href",
+    "https://www.google.com/s2/favicons?sz=64&domain=" + encodeURIComponent(host));
+}
+
+let titleDebounce = null;
+setTitleInput.addEventListener("input", function () {
+  clearTimeout(titleDebounce);
+  titleDebounce = setTimeout(function () {
+    settings.tabTitle = setTitleInput.value.trim();
+    applyIdentity();
+    saveSettings();
+  }, 200);
+});
+
+let iconDebounce = null;
+setIconInput.addEventListener("input", function () {
+  clearTimeout(iconDebounce);
+  iconDebounce = setTimeout(function () {
+    settings.tabIcon = setIconInput.value.trim();
+    applyIdentity();
+    saveSettings();
+  }, 400);
+});
+
+/* --- diagnostics ---------------------------------------------------- */
+$("#btn-log-view").addEventListener("click", function () {
+  const text = logLines.length ? logLines.join("\n") : "Nothing logged yet.";
+  modal("Diagnostics",
+    '<pre style="max-height:46vh;overflow:auto;margin:0;font:12px/1.6 var(--mono);' +
+    'white-space:pre-wrap;word-break:break-word">' + esc(text) + "</pre>",
+    [{ label: "Close" }]);
+});
+
+$("#btn-log-save").addEventListener("click", function () {
+  const blob = new Blob([logLines.join("\n") || "empty"], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quix-diagnostics.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  /* The old build leaked one blob URL per download and left the <a> in the DOM. */
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  toast("Diagnostics saved.", "ok");
+});
+
+$("#btn-reset").addEventListener("click", function () {
+  modal("Reset everything?",
+    "This clears your settings, favourites, remembered embed results and open tabs. " +
+    "It cannot be undone.",
+    [
+      { label: "Cancel" },
+      { label: "Reset", danger: true, onClick: function () {
+          storageDisabled = true;          /* stop every writer, including beforeunload */
+          clearTimeout(saveTimer);
+          try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+          location.reload();
+        } }
+    ]);
+});
+
+/* --- explainer modal ------------------------------------------------- */
+const LIMITS_HTML =
+  "<p><b>What Quix can do.</b> It loads a site in an <code>&lt;iframe&gt;</code> and grants that frame " +
+  "the permissions a browser game needs &mdash; pointer lock, fullscreen, gamepad, autoplay, wake lock " +
+  "&mdash; then hands it keyboard focus. Most embeds that &ldquo;load but don't work&rdquo; are failing " +
+  "on exactly those things.</p>" +
+
+  "<p style='margin-top:12px'><b>What Quix cannot do.</b> If a site sends " +
+  "<code>X-Frame-Options: DENY</code> or <code>Content-Security-Policy: frame-ancestors 'none'</code>, " +
+  "the browser refuses to render it in a frame. That check happens in the network stack, before any " +
+  "JavaScript on this page runs. A page cannot read, rewrite or remove another site's response headers. " +
+  "There is no attribute, sandbox flag or trick that changes this &mdash; anything that does get around " +
+  "it is either a browser extension (which can rewrite headers) or a server that re-fetches the page on " +
+  "your behalf. A static HTML file is neither.</p>" +
+
+  "<p style='margin-top:12px'><b>Why a Chrome App like Leaf could.</b> Chrome Apps had the " +
+  "<code>&lt;webview&gt;</code> tag, which is not a frame inside the app's document at all &mdash; it is a " +
+  "separate, out-of-process browser view. <code>X-Frame-Options</code> and <code>frame-ancestors</code> " +
+  "only govern framing, so they never applied to it. Extensions could also strip those headers outright " +
+  "with the blocking <code>webRequest</code> API. Neither capability is available to a normal web page, " +
+  "and Chrome Apps have since been retired.</p>" +
+
+  "<p style='margin-top:12px'><b>And it cannot even tell.</b> A page cannot detect whether its own frame was " +
+  "refused. Measured in Chromium: a cross-origin frame that loaded perfectly and one that was blocked outright are " +
+  "indistinguishable from the outside &mdash; both fire <code>load</code>, both throw <code>SecurityError</code> on " +
+  "<code>contentWindow.location</code>, both report <code>contentDocument === null</code>, and both leave a Resource " +
+  "Timing entry with every size and status field zeroed. That is why Quix asks rather than asserts, and why a game " +
+  "reads <b>plays here</b> only once you have actually played it.</p>" +
+
+  "<p style='margin-top:12px'><b>So what actually helps.</b> Plenty of .io games do allow framing and " +
+  "will now play properly here, because the frame finally has the permissions and the keyboard focus it " +
+  "needs. For the ones that refuse, <b>Open in a real tab</b> is the honest fallback &mdash; one click, " +
+  "and it works.</p>";
+
+$("#about-limits").addEventListener("click", function (e) {
+  e.preventDefault();
+  modal("What this page can and cannot do", LIMITS_HTML, [{ label: "Got it", primary: true }]);
+});
+$("#why-more").addEventListener("click", function (e) {
+  e.preventDefault();
+  modal("Why some games can't be embedded", LIMITS_HTML, [{ label: "Got it", primary: true }]);
+});
+
+/* ==========================================================================
+   Keyboard
+
+   Rule: every shortcut requires Ctrl/Meta or Alt, and nothing at all is
+   handled while a game frame has focus. The old build bound bare keys
+   globally - ArrowDown popped an alert(), Escape popped an alert(), and a
+   bare "F" wiped localStorage. Those three alone make most .io games
+   unplayable.
+   ========================================================================== */
+document.addEventListener("keydown", function (e) {
+  /* Esc closes UI layers. It is the one bare key we touch, and only while a
+     frame is NOT focused - a focused frame gets Esc itself, which is also how
+     the browser exits pointer lock. */
+  if (e.key === "Escape") {
+    if (!scrim.hidden) { closeModal(); return; }
+    if (frameHasFocus()) return;
+    if (openPanel) { hidePanels(); }
+    return;
+  }
+
+  if (frameHasFocus()) return;              /* hands off - the game owns the keyboard */
+
+  const mod = e.ctrlKey || e.metaKey;
+  const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target && e.target.tagName || "");
+
+  if (e.altKey && !mod) {
+    if (e.key === "ArrowLeft")  { e.preventDefault(); btnBack.click(); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); btnFwd.click();  return; }
+  }
+
+  if (!mod) return;
+
+  switch (e.key.toLowerCase()) {
+    case "t":
+      e.preventDefault();
+      $("#btn-newtab").click();
+      break;
+    case "w":
+      if (activeId) { e.preventDefault(); closeTab(activeId); }
+      break;
+    case "l":
+      e.preventDefault();
+      omnibox.focus();
+      omnibox.select();
+      break;
+    case "r":
+      if (!inField) { e.preventDefault(); reloadActive(); }
+      break;
+    case "h":
+      if (e.shiftKey) { e.preventDefault(); showPanel("library"); }
+      break;
+    case ",":
+      e.preventDefault();
+      showPanel("settings");
+      break;
+    case "tab": {
+      if (tabs.length < 2) break;
+      e.preventDefault();
+      const i = tabs.findIndex(function (t) { return t.id === activeId; });
+      const next = (i + (e.shiftKey ? -1 : 1) + tabs.length) % tabs.length;
+      activate(tabs[next].id);
+      break;
+    }
+  }
+}, true);
+
+/* Focus moving into a cross-origin frame blurs the top window - that is our
+   cue that the game now owns the keyboard, so drop the shield. */
+window.addEventListener("blur", function () {
+  setTimeout(function () {
+    if (frameHasFocus()) {
+      const t = activeTab();
+      if (t) { removeShield(t); markAlive(t); }
+    }
+  }, 0);
+});
+
+/* ==========================================================================
+   Session
+   ========================================================================== */
+function persistSession() {
+  /* When restore is off we simply stop updating the stored session rather than
+     destroying it - turning the setting back on should not have cost you the
+     tabs you had open. */
+  if (!settings.restore) return;
+  settings.session = tabs.filter(function (t) { return !!t.url; })
+                         .map(function (t) { return { u: t.url, a: t.id === activeId }; });
+  saveSettings();
+}
+
+function restoreSession() {
+  if (!settings.restore) return false;
+  if (!Array.isArray(settings.session) || !settings.session.length) return false;
+
+  let wantActive = null;
+  settings.session.slice(0, 12).forEach(function (s) {
+    if (!s || !s.u) return;
+    const t = makeTab(s.u, { background: true, defer: true, silent: true });
+    if (t && s.a) wantActive = t.id;
+  });
+
+  if (!tabs.length) return false;
+  activate(wantActive || tabs[0].id);
+  showPanel("library");
+  log("restored " + tabs.length + " tab(s)");
+  return true;
+}
+
+window.addEventListener("beforeunload", function () {
+  if (storageDisabled) return;
+  persistSession();
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(settings)); } catch (e) {}
+});
+
+/* ==========================================================================
+   Boot
+   ========================================================================== */
+function init() {
+  loadSettings();
+
+  setThemeSel.value   = settings.theme;
+  setTimeoutSel.value = String(settings.timeout);
+  setTitleInput.value = settings.tabTitle;
+  setIconInput.value  = settings.tabIcon;
+  [paintClock, paintDate, paint24h, paintShield, paintMic, paintFreeze, paintRestore]
+    .forEach(function (fn) { fn(); });
+
+  applyTheme();
+  applyIdentity();
+  refreshClock();
+  renderChips();
+  renderLibrary();
+  renderTabs();
+  syncChrome();
+
+  if (!restoreSession()) showPanel("library");
+
+  log("boot ok - " + GAMES.length + " games, " + tabs.length + " tab(s)");
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init, { once: true });
+} else {
+  init();
+}
+</script>
+</body>
 </html>
